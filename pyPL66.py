@@ -39,7 +39,7 @@ def pypl66(x,dt=1,T=33):
     cs = cos(t.T/nw2)
     jm = np.flip(j)
     
-    for ic in 1:ncol:
+    for ic in range(1, ncol+1) :
         jgd = x[:,ic].where(x != nan,drop=True)
         npts = jgd.size()
         if npts > nw2:
