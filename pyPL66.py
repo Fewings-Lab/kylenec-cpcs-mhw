@@ -46,7 +46,7 @@ def pypl66(x,dt=1,T=33):
             # detrend time series, then add back trend after filtering
             xdt = sig.detrend(x[jgd,ic])
             trnd = x[jgd,ic]-xdt
-            y = [cs[jm]*xdt[jm];xdt;cs[j]*xdt[npts+1-j]]
+            y = [[cs[jm]*xdt[jm]],[xdt],[cs[j]*xdt[npts+1-j]]]
 
             # filter
             yf = sig.lfilter(wts, 1.0, y)
