@@ -13,16 +13,17 @@ import pandas as pd
 import scipy.signal as sig
 
 def pypl66(x,dt=1,T=33):
+    x.squeeze()
     cutoff = T/dt
     fq = 1/cutoff
     nw = np.round((2*T)/dt)
     print("number of weights = "+str(nw))
     nw2 = 2*nw
 
-    [npts,ncol] = x.shape()
+    [npts,ncol] = x.shape[0:2]
     if npts < ncol:
         x = x.T
-        [npts,ncol] = x.shape()
+        [npts,ncol] = x.shape[0:2]
     xf = x
 
     # filter weights
@@ -32,15 +33,15 @@ def pypl66(x,dt=1,T=33):
     wts = (2*np.sin(2*fq*t)-np.sin(3*fq*t))/den
 
     # make weights symmetric
-    wts = [np.flip(wts),2*fq,wts]
+    wts = np.concatenate((np.flip(wts),np.array([2*fq]),wts))
     wts = wts/wts.sum()
 
     # fold tapered time series
-    cs = cos(t.T/nw2)
+    cs = np.cos(t.T/nw2)
     jm = np.flip(j)
     
-    for ic in range(1, ncol+1) :
-        jgd = x[:,ic].where(x != nan,drop=True)
+    for ic in range(0, ncol) :
+        jgd = x[:,ic].where(x != np.nan,drop=True)
         npts = jgd.size()
         if npts > nw2:
             # detrend time series, then add back trend after filtering
