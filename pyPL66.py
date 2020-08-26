@@ -13,17 +13,17 @@ import pandas as pd
 import scipy.signal as sig
 
 def pypl66(x,dt=1,T=33):
-    x.squeeze()
+#     x.squeeze()
     cutoff = T/dt
     fq = 1/cutoff
     nw = np.round((2*T)/dt)
     print("number of weights = "+str(nw))
     nw2 = 2*nw
 
-    [npts,ncol] = x.shape[0:2]
+    [npts,ncol] = x.shape
     if npts < ncol:
         x = x.T
-        [npts,ncol] = x.shape[0:2]
+        [npts,ncol] = x.shape
     xf = x
 
     # filter weights
@@ -42,7 +42,7 @@ def pypl66(x,dt=1,T=33):
     
     for ic in range(0, ncol) :
         jgd = x[:,ic].where(x != np.nan,drop=True)
-        npts = jgd.size()
+        npts = jgd.size
         if npts > nw2:
             # detrend time series, then add back trend after filtering
             xdt = sig.detrend(x[jgd,ic])
