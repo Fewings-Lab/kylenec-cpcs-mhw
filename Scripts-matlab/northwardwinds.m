@@ -56,6 +56,7 @@ xlim([dates(1) dates(end)])
 % To sort data by month of measurement, create date number vector
 Dates = datevec(dates); % Date number vector, 90934x6 double
 
+
 % Sorting raw and both filtered sets by month
 datmat = [dat, datLo, datHi]; % Concatenating the raw and filtered data for easier loops
 monthDatmat = NaN.*ones(3,12,90934); % NaN matrix to hold data separated by month
@@ -156,3 +157,78 @@ legend('Combined high and low frequencies','Low-passed frequencies','High-passed
 title('Variability by Month')
 xlabel('Month number')
 ylabel('Fraction variability explained')
+
+% N* for whole time series
+rhoyy = autocorrtl(dat,200);
+figure(7)
+plot((-200:200),rhoyy)
+hold on
+yline(0,'-k')
+yline(0.5,'--r')
+title('Autocorrelation of V_{10} near Pt. Lengua de Vaca')
+ylabel('\rho_{yy}(\tau)')
+xlabel('Time Lag')
+
+Nst = length(dat)/26;
+
+% N* for low-passed time series
+rhoyyL = autocorrtl(datLo,200);
+figure(8)
+plot((-200:200),rhoyyL)
+hold on
+yline(0,'-k')
+yline(0.5,'--r')
+title('Autocorrelation of low-passed V_{10} near Pt. Lengua de Vaca')
+ylabel('\rho_{yy}(\tau)')
+xlabel('Time Lag [hours]')
+
+NstL = length(dat)/26;
+
+% N* for high-passed time series
+rhoyyH = autocorrtl(datHi,200);
+figure(9)
+plot((-200:200),rhoyyH)
+hold on
+plot(0:24:200,rhoyyH(201:24:end),'-b')
+yline(0,'-k')
+yline(0.5,'--r')
+title('Autocorrelation of high-passed V_{10} near Pt. Lengua de Vaca')
+ylabel('\rho_{yy}(\tau)')
+xlabel('Time Lag [hours]')
+
+NstH = length(dat)/38;
+
+% Adjusting confidence intervals for monthly means using different N*'s
+% found by rule of thumb
+% Get confidence intervals on the mean to add to graph
+N = length(dat);
+CILo = (1.96/sqrt(NstL)).*stdvecL;
+CIHi = (1.96/sqrt(NstH)).*stdvecH;
+
+% Graph of monthly means with standard deviation errorbars and confidence intervals
+% Lower frequencies
+figure(10)
+subplot(2,1,1)
+errorbar(meanvecL,stdvecL)
+hold on
+plot(meanvecL+CILo,'r--','LineWidth',1)
+plot(meanvecL-CILo,'r--','LineWidth',1)
+title('Low-Pass Filtered Monthly Mean Northward Component of Wind Velocity')
+ylabel('V_{10}(t) [m/s]')
+xticks(1:24)
+xticklabels(monstr)
+xlabel('Month Number')
+legend('Monthly Mean and Standard Deviation','95% Confidence Interval')
+
+% Higher frequencies
+subplot(2,1,2)
+errorbar(meanvecH,stdvecH)
+hold on
+plot(meanvecH+CIHi,'r--','LineWidth',1)
+plot(meanvecH-CIHi,'r--','LineWidth',1)
+title('Diurnal and Higher Frequency Monthly Mean Northward Component of Wind Velocity')
+ylabel('V_{10}(t) [m/s]')
+xticks(1:24)
+xticklabels(monstr)
+xlabel('Month Number')
+legend('Monthly Mean and Standard Deviation','95% Confidence Interval')
