@@ -33,7 +33,8 @@ def pypl66(x,dt=1,T=33):
 
     # make weights symmetric
     wts = np.concatenate((np.flip(wts),np.array([2*fq]),wts))
-    wts = wts/wts.sum()
+    #a = np.nansum(wts)
+    wts /= np.sum(wts)
 
     # fold tapered time series
     cs = np.cos(t.T/nw2)
@@ -49,7 +50,7 @@ def pypl66(x,dt=1,T=33):
             y = [[cs[jm]*xdt[jm]],[xdt],[cs[j]*xdt[npts+1-j]]]
 
             # filter
-            yf = sig.lfilter(wts, 1.0, y)
+            yf = sig.lfilter(wt, 1.0, y)
 
             # strip off extra points
             xf[jgd,ic] = yf[nw2+1:npts+nw2]
