@@ -10,6 +10,7 @@ Description: From SOI example on Iris 1.2 website https://scitools.org.uk/iris/d
 """
 import numpy as np
 import matplotlib.pyplot as plt
+# UDUNITS2_XML_PATH="C:/Users/cooleyky/AppData/Local/Continuum/miniconda3/Library/share/udunits/udunits2.xml"
 import iris
 import iris.plot as iplt
 
@@ -42,11 +43,11 @@ def low_pass_weights(window, cutoff):
 def main():
 
     # load the hourly 10-meter northward wind velocity time-series
-    fname = iris.sample_data_path('V10_2010_2020.nc')
+    fname = 'V10_2010_2020.nc'
     nwv = iris.load_cube(fname)
 
     # window length for filters
-    window = 121 
+    window = 12
     # This gives us a filter with a 123 weights
 
     # construct 33-hour low-pass filter to remove approx diurnal and higher freq signals
