@@ -10,7 +10,6 @@ Description: From SOI example on Iris 1.2 website https://scitools.org.uk/iris/d
 """
 import numpy as np
 import matplotlib.pyplot as plt
-# UDUNITS2_XML_PATH="C:/Users/cooleyky/AppData/Local/Continuum/miniconda3/Library/share/udunits/udunits2.xml"
 import iris
 import iris.plot as iplt
 
@@ -45,9 +44,10 @@ def main():
     # load the hourly 10-meter northward wind velocity time-series
     fname = 'V10_2010_2020.nc'
     nwv = iris.load_cube(fname)
+    nwv = nwv.extract(iris.Constraint(expver=1,latitude=-30.25,longitude=-71.75))
 
     # window length for filters
-    window = 12
+    window = 121
     # This gives us a filter with a 123 weights
 
     # construct 33-hour low-pass filter to remove approx diurnal and higher freq signals
@@ -66,15 +66,16 @@ def main():
     #                             len(wgts84),
     #                             weights=wgts84)
 
-    nwvH = nwv - nwvL # subtracting the low-passed component from the raw signal to give us the high-passed part
+    # ind = np.invert(np.isnan(nwv.data))
+    nwvH = nwvL.copy(data=nwv.data[60:-60]-nwvL.data) # subtracting the low-passed component from the raw signal to give us the high-passed part
     
     # plot the V10 time series and both filtered versions
     fig = plt.figure(figsize=(9, 4))
-    iplt.plot(nwv, coords=['time'], color='0.7', linewidth=1., linestyle='-',
+    iplt.plot(nwv, color='0.7', linewidth=1., linestyle='-',
               alpha=1., label='no filter')
-    iplt.plot(nwvL, coords=['time'], color='b', linewidth=2., linestyle='-',
+    iplt.plot(nwvL, color='b', linewidth=2., linestyle='-',
               alpha=.7, label='Low-pass filter')
-    iplt.plot(nwvH, coords=['time'], color='r', linewidth=2., linestyle='-',
+    iplt.plot(nwvH, color='r', linewidth=2., linestyle='-',
               alpha=.7, label='High-pass filter')
     #plt.ylim([-4, 4])
     plt.title('10-meter Northward Wind Velocity')
