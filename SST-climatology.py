@@ -152,20 +152,21 @@ plt.legend(["down to $-2\sigma$","up to $2\sigma$"])
 
 
 # Take dSST'/dt 
-dt = sstA.differentiate("time")
+dt1 = sstA.differentiate("time")
 # plot SST' and time derivative in separate subplots
 f10, [ax10, ax11] = plt.subplots(2,1,sharex=True)
 sstA.plot(ax=ax10)
 ax10.set_title('SST\'')
 ax10.set_xlabel("")
 ax10.set_ylabel(r"SST' [$^\circ$C]")
-dt.plot(ax=ax11)
+dt1.plot(ax=ax11)
 ax11.set_title(r"$ \frac{\partial \mathrm{SST}' }{\partial t} $")
 ax11.set_ylabel(r"Change in SST' [$^\circ$C/hr]")
 
-# # plot SST' and time derivative in same axes
-# fig2 = plt.subplots()
-# sstA.plot()
-# dt.plot()
-# plt.title(r"SST' and $ \frac{\partial \mathrm{SST}' }{\partial t} $")
-# plt.legend({"SST'",r"$ \frac{\partial \mathrm{SST}' }{\partial t} $"})
+# dSST'/dt using a first-order difference approximation
+# Consider how rate of change is "rise/run" -- rise is the difference between successive points in time, run is the 1-hr between each point
+dt2 = sstA[1:-1]-sstA[0:-2]
+f11, ax12 = plt.subplots()
+dt2.plot(ax=ax12)
+ax12.set_title(r"$ \frac{\partial \mathrm{SST}' }{\partial t} $")
+ax12.set_ylabel(r"Change in SST' [$^\circ$C/hr]")
