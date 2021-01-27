@@ -165,7 +165,8 @@ ax11.set_ylabel(r"Change in SST' [$^\circ$C/hr]")
 
 # dSST'/dt using a first-order difference approximation
 # Consider how rate of change is "rise/run" -- rise is the difference between successive points in time, run is the 1-hr between each point
-dt2 = sstA[1:-1]-sstA[0:-2]
+dt2 = sstA[1:-1]-sstA[0:-2].values
+dt2 = dt2[1:-1]
 f11, ax12 = plt.subplots()
 dt2.plot(ax=ax12)
 ax12.set_title(r"$ \frac{\partial \mathrm{SST}' }{\partial t} $")
