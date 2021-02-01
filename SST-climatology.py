@@ -45,7 +45,7 @@ sstlabel = currentaxis.get_ylabel()
 Tcutoff = 168 # This is the maximum period in hours (dt = 1 hr) we want to exclude from the low-passed signal, also to take care of possible effects from a change in AVHRR product used in ERA-5
 # 168 hrs = 7 days (observations of events in CCS show periods of ~8 days)
 freq = 2*np.pi/Tcutoff # Convert cutoff period to angular frequency
-win = 121 # Window length of filter is odd to be symmetric
+win = 363 # Window length of filter is odd to be symmetric
 sstL, sstH = filt.lowpass2(sst,freq,win)
 
 # Plotting filtered arrays
