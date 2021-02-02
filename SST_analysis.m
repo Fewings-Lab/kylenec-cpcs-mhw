@@ -66,14 +66,18 @@ yd = dn - datenum(dv(:,1),1,1) + 1;
 
 % Vectors to use for matching times and storing climatology
 yhr = 1:1/24:(367-1/24);
-sst0 = NaN(length(yd),1);
+foo = NaN(length(yd),1);
 
 % loop by values
 for i=1:366*24
     values = ismembertol(yd,yhr(i));
-    mu = nanmean(sstf(values));
-    sst0(values) = mu;
+    mu = nanmean(sst(values));
+    foo(values) = mu;
 end 
+% Stitch 3 instances of foo together to filter
+foo2 = cat(1,foo,foo,foo);
+foo3 = pl66tn(foo2,1,168); % apply 7-day filter
+sst0 = foo3(length(yd)+1:2*length(yd)); % take only the middle portion of filtered climatology
 
 SST0 = timeseries(sst0,datestr(dn)); % Make corresponding timeseries
 
