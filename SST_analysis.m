@@ -84,7 +84,7 @@ SST0 = timeseries(sst0,datestr(dn)); % Make corresponding timeseries
 % Plot climatology
 figure(3)
 plot(SST0)
-title('Climatology from low-passed ERA-5 SST')
+title('Low-passed climatology from ERA-5 SST')
 xlabel('Date')
 xtickformat('yyyy-MMM')
 ylabel('Sea Surface Temperature [^{\circ}C]','Interpreter','tex')
