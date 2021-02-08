@@ -34,7 +34,8 @@ save('ptLavapie_SST.mat','lat','lon','sst','time','dn')
 clear
 load('ptLavapie_SST.mat')
 sst = sst-273.15; % Convert sst to degC
-SST = timeseries(sst,datestr(dn)); % Make sst timeseries object
+ds = datestr(dn);
+SST = timeseries(sst,ds); % Make sst timeseries object
 % % Plot raw data
 % figure(1)
 % plot(sst)
@@ -45,7 +46,7 @@ SST = timeseries(sst,datestr(dn)); % Make sst timeseries object
 %% Use pl66 to low-pass filter sst
 % with dt=1 (same as default) and T=168 hrs (7 days)
 sstf = pl66tn(sst,1,168);
-SSTF = timeseries(sstf,datestr(dn)); % Make sstf timeseries
+SSTF = timeseries(sstf,ds); % Make sstf timeseries
 % Plot low-passed filtered data with raw data
 figure(2)
 plot(SST,'k-')
@@ -56,6 +57,14 @@ legend('SST_{raw}','Low-passed SST (T=168 hr)')
 xlabel('Date')
 xtickformat('yyyy-MMM')
 ylabel('Sea Surface Temperature [^{\circ}C]','Interpreter','tex')
+
+%% Bandpass sst
+% 30 day low pass filter
+sstf2 = pl66tn(sstf,1,(30*24));
+% take high-pass part of signal
+sstb = sstf-sstf2;
+% make timeseries
+SSTB = timeseries(sstb,ds);
 %% Obtain climatology
 % Convert datenums to date vector [yy mm dd hh mm ss]
 dv = datevec(dn); 
@@ -77,9 +86,13 @@ end
 % Stitch 3 instances of foo together to filter
 foo2 = cat(1,foo,foo,foo);
 foo3 = pl66tn(foo2,1,168); % apply 7-day filter
-sst0 = foo3(length(yd)+1:2*length(yd)); % take only the middle portion of filtered climatology
+foo4 = pl66tn(foo3,1,(30*24)); % 30-day filter
+% take high-pass part of signal
+foo5 = foo3-foo4;
 
-SST0 = timeseries(sst0,datestr(dn)); % Make corresponding timeseries
+sst0 = foo5(length(yd)+1:2*length(yd)); % take only the middle portion of filtered climatology
+
+SST0 = timeseries(sst0,ds); % Make corresponding timeseries
 
 % Plot climatology
 figure(3)
@@ -90,27 +103,27 @@ xtickformat('yyyy-MMM')
 ylabel('Sea Surface Temperature [^{\circ}C]','Interpreter','tex')
 
 %% Take anomaly
-sstA = sstf-sst0;
+sstA = sstb-sst0;
 sig = nanstd(sstA);
 mean = nanmean(sstA);
-SSTA = timeseries(sstA,datestr(dn)); % Make corresponding timeseries
+SSTA = timeseries(sstA,ds); % Make corresponding timeseries
 
 % Plot SST'
 figure(4)
-yline(mean,'--k')
-hold on
-yline(mean+2*sig,'--r')
-yline(mean-2*sig,'--r')
 plot(SSTA)
 title("SST' at at -35.51, -72.77")
 xlabel('Date')
 xtickformat('yyyy-MMM')
+hold on
+yline(mean,'--k')
+yline(mean+2*sig,'--r')
+yline(mean-2*sig,'--r')
 ylabel('Sea Surface Temperature [^{\circ}C]','Interpreter','tex')
 legend("SST'","\mu_{SST'}","\pm 2 \sigma_{SST'}")
 
 %% First-order approximation of dSST'/dt
 dsstdt = sstA(2:end)-sstA(1:end-1); 
-DSSTDT = timeseries(dsstdt,datestr(dn(1:end-1))); % Make corresponding timeseries
+DSSTDT = timeseries(dsstdt,ds(1:end-1)); % Make corresponding timeseries
 
 % Plot of SST' and dt in same figure with 2 y-axes
 figure(5)
