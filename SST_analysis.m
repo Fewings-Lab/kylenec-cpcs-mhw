@@ -41,7 +41,7 @@ SST = timeseries(sst,ds); % Make sst timeseries object
 % plot(sst)
 % title('ERA-5 SST at -35.51, -72.77')
 % xlabel('Date')
-% xtickformat('yyyy-MMM')
+% datetick('x','yyyy-mmm','keeplimits','keepticks')
 % ylabel('Sea Surface Temperature [^{\circ}C]','Interpreter','tex')
 %% Use pl66 to low-pass filter sst
 % with dt=1 (same as default) and T=168 hrs (7 days)
@@ -53,18 +53,18 @@ plot(SST,'k-')
 hold on
 plot(SSTF,'--')
 title('ERA-5 SST at -35.51, -72.77')
-legend('SST_{raw}','Low-passed SST (T=168 hr)')
+legend('SST_{raw}','7-day low-pass filtered SST')
 xlabel('Date')
-xtickformat('yyyy-MMM')
+datetick('x','yyyy-mmm','keeplimits','keepticks')
 ylabel('Sea Surface Temperature [^{\circ}C]','Interpreter','tex')
 
-%% Bandpass sst
-% 30 day low pass filter
-sstf2 = pl66tn(sstf,1,(30*24));
-% take high-pass part of signal
-sstb = sstf-sstf2;
-% make timeseries
-SSTB = timeseries(sstb,ds);
+% %% Bandpass sst
+% % 30 day low pass filter
+% sstf2 = pl66tn(sstf,1,(30*24));
+% % take high-pass part of signal
+% sstb = sstf-sstf2;
+% % make timeseries
+% SSTB = timeseries(sstb,ds);
 %% Obtain climatology
 % Convert datenums to date vector [yy mm dd hh mm ss]
 dv = datevec(dn); 
@@ -86,24 +86,27 @@ end
 % Stitch 3 instances of foo together to filter
 foo2 = cat(1,foo,foo,foo);
 foo3 = pl66tn(foo2,1,168); % apply 7-day filter
-foo4 = pl66tn(foo3,1,(30*24)); % 30-day filter
-% take high-pass part of signal
-foo5 = foo3-foo4;
 
-sst0 = foo5(length(yd)+1:2*length(yd)); % take only the middle portion of filtered climatology
+% foo4 = pl66tn(foo3,1,(30*24)); % 30-day filter
+% % take high-pass part of signal to bandpass
+% foo5 = foo3-foo4;
+
+sst0 = foo3(length(yd)+1:2*length(yd)); % take only the middle portion of filtered climatology
 
 SST0 = timeseries(sst0,ds); % Make corresponding timeseries
 
 % Plot climatology
 figure(3)
 plot(SST0)
-title('Low-passed climatology from ERA-5 SST')
+% plot(dn(1:(365*24*2)),sst0(1:(365*24*2)))
+title('Low-pass filtered climatology of ERA-5 SST')
 xlabel('Date')
-xtickformat('yyyy-MMM')
+% xlim([dn(1) dn((365*24*2))])
+datetick('x','mmmm','keeplimits','keepticks')
 ylabel('Sea Surface Temperature [^{\circ}C]','Interpreter','tex')
 
 %% Take anomaly
-sstA = sstb-sst0;
+sstA = sstf-sst0;
 sig = nanstd(sstA);
 mean = nanmean(sstA);
 SSTA = timeseries(sstA,ds); % Make corresponding timeseries
@@ -111,9 +114,9 @@ SSTA = timeseries(sstA,ds); % Make corresponding timeseries
 % Plot SST'
 figure(4)
 plot(SSTA)
-title("SST' at at -35.51, -72.77")
+title("SST' at -35.51, -72.77")
 xlabel('Date')
-xtickformat('yyyy-MMM')
+datetick('x','yyyy-mmm','keeplimits','keepticks')
 hold on
 yline(mean,'--k')
 yline(mean+2*sig,'--r')
@@ -123,23 +126,26 @@ legend("SST'","\mu_{SST'}","\pm 2 \sigma_{SST'}")
 
 %% First-order approximation of dSST'/dt
 dsstdt = sstA(2:end)-sstA(1:end-1); 
-DSSTDT = timeseries(dsstdt,ds(1:end-1)); % Make corresponding timeseries
+dsstdtf = pl66tn(dsstdt,1,(3*7*24));
+DSSTDT = timeseries(dsstdtf,ds(1:end-1,:)); % Make corresponding timeseries
 
 % Plot of SST' and dt in same figure with 2 y-axes
 figure(5)
 
 yyaxis left
 plot(SSTA)
-title("SST' and dSST'/dt at -35.51, -72.77",'Interpreter','tex')
+title("$\textsf{SST' and }\frac{\partial \textsf{SST'}}{\partial \textsf{t}}\textsf{ at -35.51, -72.77}$",'Interpreter','latex')
 hold on
 yline(0,'--')
 xlabel('Date')
-xtickformat('yyyy-MMM')
+datetick('x','yyyy-mmm','keeplimits','keepticks')
+yline(mean+2*sig,'--r')
+yline(mean-2*sig,'--r')
 ylabel("SST' [^{\circ}C]",'Interpreter','tex')
 
 yyaxis right
 plot(DSSTDT)
 hold on
 yline(0,'--')
-ylabel("dSST'/dt [^{\circ}C/hr]",'Interpreter','tex')
-xtickformat('yyyy-MMM')
+ylabel("$\frac{\partial \textsf{SST'}}{\partial \textsf{t}} \textsf{[}^{\circ}\textsf{C/hr]}$",'Interpreter','latex')
+datetick('x','yyyy-mmm','keeplimits','keepticks')

@@ -98,6 +98,7 @@ plt.legend(["SST'",r"$\mu_{SST'}$",r"$\pm 2 \sigma_{SST'}$"])
 
 # Histogram of time where abs(SST') exceeds 2std by month
 centered = sstA - mean # anomalies detrended so that mean=0
+centered = centered[0::24] # Use only every 24 pts for days where this is true
 isexceed = np.abs(centered) >= twosig # boolean for where these exceed 2std
 anomalies = centered[isexceed] # picking out those values from the data
 month = anomalies["time.month"] # array with month number for each point
@@ -106,7 +107,7 @@ month.plot.hist(bins=np.arange(0.5,13.5,1)) # histogram with month number bins
 plt.title("SST' exceeding $\pm 2 \sigma$") # title 
 plt.xticks(ticks=np.arange(1,13),labels=["J","F","M","A","M","J","J","A","S","O","N","D"]) #ticks at center of bins with first letter of month for label
 plt.xlabel("Month") # x-label
-plt.ylabel("Total hours") # y-label
+plt.ylabel("Total days 1978-2020") # y-label
 
 
 # Histogram by season
@@ -116,7 +117,7 @@ season.plot.hist() # histogram with month number bins
 # season.plot.hist(bins=["DJF","MAM","JJA","SON"]) # histogram with month number bins
 plt.title("SST' exceeding $\pm 2 \sigma$") # title 
 plt.xlabel("Season") # x-label
-plt.ylabel("Total hours") # y-label
+plt.ylabel("Total days 1978-2020") # y-label
 
 # Histogram with high/low events separate
 top = centered >= twosig # boolean for where these exceed 2std
@@ -130,7 +131,7 @@ plt.hist([monthb, montht],bins=np.arange(0.5,13.5,1))
 plt.title("SST' exceeding $\pm 2 \sigma$") # title 
 plt.xticks(ticks=np.arange(1,13),labels=["J","F","M","A","M","J","J","A","S","O","N","D"]) #ticks at center of bins with first letter of month for label
 plt.xlabel("Month") # x-label
-plt.ylabel("Total hours") # y-label
+plt.ylabel("Total days 1978-2020") # y-label
 plt.legend(["below $-2\sigma$","over $2\sigma$"])
 
 # Histogram with abs(SST')<2sig high/low events separate
@@ -147,7 +148,7 @@ plt.hist([monthbW, monthtW],bins=np.arange(0.5,13.5,1))
 plt.title("SST' between 0 and $\pm 2 \sigma$") # title 
 plt.xticks(ticks=np.arange(1,13),labels=["J","F","M","A","M","J","J","A","S","O","N","D"]) #ticks at center of bins with first letter of month for label
 plt.xlabel("Month") # x-label
-plt.ylabel("Total hours") # y-label
+plt.ylabel("Total days 1978-2020") # y-label
 plt.legend(["down to $-2\sigma$","up to $2\sigma$"])
 
 
