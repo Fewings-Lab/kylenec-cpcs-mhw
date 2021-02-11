@@ -50,9 +50,9 @@ sstf = pl66tn(sst,1,240);
 % SSTF = timeseries(sstf,ds); % Make sstf timeseries
 % Plot low-passed filtered data with raw data
 figure(7)
-plot(t,sst,'Color',[0.5,0.5,0.5],'LineWidth',6)
+plot(t,sst,'Color',[0.8,0.8,0.8],'LineWidth',2)
 hold on
-plot(t,sstf,'k','LineWidth',2)
+plot(t,sstf,'k','LineWidth',1)
 title('ERA-5 Sea Surface Temperature at 35.51^{\circ}S, 72.77^{\circ}W','Interpreter','tex')
 legend('SST_{raw}','10-day low-pass filtered SST')
 xlabel('Date')
