@@ -59,12 +59,6 @@ xlabel('Date')
 datetick('x','yyyy-mmm','keeplimits','keepticks')
 ylabel('SST [^{\circ}C]','Interpreter','tex')
 
-%% Bandpass sst
-% 6-month (half of a year) low-pass filter
-sstf2 = pl66tn(sstf,1,hours(years(0.5)));
-
-% take high-pass part of signal
-sstb = sstf-sstf2;
 
 %% Obtain climatology
 % Convert datenums to date vector [yy mm dd hh mm ss]
@@ -88,37 +82,51 @@ end
 foo2 = cat(1,foo,foo,foo,foo,foo);
 
 % Filter the working variable
-% foo3 = pl66tn(foo2,1,240); % apply 10-day filter
+foo3 = pl66tn(foo2,1,240); % apply 10-day filter
 % foo4 = pl66tn(foo3,1,hours(years(0.5))); % 6-month (half of a year) low-pass filter
 % % take high-pass part of signal to bandpass
 % foo5 = foo3-foo4;
 
-% If we did the high-pass filter first:
-foo3 = pl66tn(foo2,1,hours(years(0.5))); % 6-month (half of a year) low-pass filter
-% take high-pass part of signal to bandpass
-foo4 = foo2-foo3;
-foo5 = pl66tn(foo4,1,240); % apply 10-day filter
+% % If we did the high-pass filter first:
+% foo3 = pl66tn(foo2,1,hours(years(0.5))); % 6-month (half of a year) low-pass filter
+% % take high-pass part of signal to bandpass
+% foo4 = foo2-foo3;
+% foo5 = pl66tn(foo4,1,240); % apply 10-day filter
 
 % take only the middle portion of filtered climatology
-% sst0 = foo3(2*length(yd)+1:3*length(yd)); % low-pass filtered only
-sst0 = foo5(2*length(yd)+1:3*length(yd)); % bandpass filtered
+sst0 = foo3(2*length(yd)+1:3*length(yd)); % low-pass filtered only
+% sst0 = foo5(2*length(yd)+1:3*length(yd)); % bandpass filtered
 
 % Plot climatology
 figure(8)
 plot(t,sst0)
 % plot(dn(1:(365*24*2)),sst0(1:(365*24*2)))
-% % Title for low-pass climatology
-% title('Low-pass filtered climatology of ERA-5 SST')
-% Title for bandpass climatology
-title('Bandpass filtered climatology of ERA-5 SST')
+% Title for low-pass climatology
+title('Low-pass filtered climatology of ERA-5 SST')
+% % Title for bandpass climatology
+% title('Bandpass filtered climatology of ERA-5 SST')
 xlabel('Date')
 % xlim([dn(1) dn((365*24*2))])
 datetick('x','mmmm','keeplimits','keepticks')
 ylabel('Sea Surface Temperature [^{\circ}C]','Interpreter','tex')
 
 %% Take anomaly
-% sstA = sstf-sst0; % using low-pass filtered signal
-sstA = sstb-sst0; % using bandpass filtered signal
+sstA = sstf-sst0; % using low-pass filtered signal
+% sstA = sstb-sst0; % using bandpass filtered signal
+
+% Bandpass SST'
+% 10-day low-pass filter
+sstA = pl66tn(sstA,1,240); 
+% 6-month (half of a year) low-pass filter
+hrs = hours(years(0.5)); % define the cutoff frequency in hours
+foo6 = pl66tn(sstA,1,hours(years(0.5))); % Evaluate the low-pass filtered signal
+
+% Take high-pass part of signal
+sstA = sstA-foo6;
+% Replace one window-length with NaNs on each end
+sstA(1:2*round(hrs))=NaN;
+sstA(end-2*round(hrs):end)=NaN;
+
 sig = nanstd(sstA);
 mean = nanmean(sstA);
 
@@ -194,6 +202,11 @@ tTm = t(SSTlm & warmest); % times of the local maxima in SST'
 dsstM = dsstdtf(dSSTlm);
 tdTm  = t(dSSTlm); % times of the local maxima in dSST'
 
+% Selecting events that occur in Dec-Feb
+monthnum = dv(SSTlm & warmest, 2); % Pick month number of all of these events
+summerSSTa = sstM(monthnum <3 | monthnum==12); % make a vector of these events
+summerDates = tTm(monthnum <3 | monthnum==12); % corresponding times
+
 % Reduce dSST' points by limiting to the last nearest date within 24 days of peak SST' dates
 maxdate = tTm;
 mindate = tTm - days(24);
@@ -218,6 +231,7 @@ plot(t,sstA,tTm,sstM,'.','MarkerSize',12)
 % Title for bandpass SST' signal
 title("$\textsf{10-day to 6-month Bandpass Filtered SST' and 3-week Low-pass Filtered }\frac{\partial \textsf{SST'}}{\partial \textsf{t}}\textsf{ at 35.51}^{\circ}\textsf{S, 72.77}^{\circ}\textsf{W}$",'Interpreter','latex')
 hold on
+plot(summerDates,summerSSTa,'*','MarkerSize',12,'LineWidth',1)
 yline(0,'-k')
 xlabel('Date')
 datetick('x','yyyy-mmm','keeplimits','keepticks')
