@@ -34,31 +34,49 @@ end
 dn = datenum(time1); % convert to datenum
 dv = datevec(time1); % Convert to datevec
 yd = dn - datenum(dv(:,1),1,1) + 1; % Convert to yearday
-% Vector to use for matching times 
+% Vector to use for matching times to 6-hourly data
 yhr = 1:1/4:(367-1/4);
 % Vector to store climatology
 sstSw0 = NaN(size(sstSw1));
-for j = 1:length(lon)
-    for k = 1:length(lat)
-        foo2 = NaN(size(yd));
-        % loop by values
-        for i=1:366*4
-           values = ismembertol(yd,yhr(i));
-           mu = nanmean(sstSw1(j,k,values));
-           foo2(values) = mu;
-        end 
-       
-        
-    end
+
+% loop by values
+for i=1:366*4
+   times = ismembertol(yd,yhr(i)); % Logical of times in the 42-yr record that match the yearday and time
+   mu = mean(sstSw1(:,:,times),3,'omitnan'); % take the mean along time dimension
+   k = find(times); % Indices of the nonzero points in times
+   for j = 1:length(k) % Loop through these times
+       sstSw0(:,:,k(j)) = mu; % Assign 2D mean array to the time slice
+   end
+end 
+
+% Low-pass filter climatological annual cycle
+for l=1:length(lon) % loop along one spatial dimension since pl66 can only filter 2D arrays,
+    % we can use either as long as time is the longer dimension
+    sstSw0(l,:,:) = (pl66tn(squeeze(sstSw0(l,:,:)),1,240))'; % apply filter and assign to 2D longitude slice
 end
 
-% Filter the working variable
-foo4 = pl66tn(foo3,1,240); % apply 10-day filter
+%%
+% Take difference between sstSw1 and sstSw0 to find SST'
+sstSwA = sstSw1-sstSw0;
 
+% Bandpass SST' by applying 6-month high-pass filter
+
+% 6-month (half of a year) low-pass filter
+hrs = hours(years(0.5)); % define the cutoff frequency in hours
+lp6mo = nan(size(sstSwA)); % Initialize empty matrix to hold low-pass part
+for m=1:length(lon) % loop along one spatial dimension since pl66 can only filter 2D arrays,
+    % we can use either as long as time is the longer dimension
+    lp6mo(m,:,:) = pl66tn(squeeze(sstSwA(m,:,:)),1,hrs)'; % Evaluate the low-pass filtered signal  and assign to 2D longitude slice
+end
+% Take high-pass part of signal
+sstSwA = sstSwA-lp6mo;
+% Replace one window-length with NaNs on each end
+sstSwA(:,:,1:2*round(hrs))=NaN;
+sstSwA(:,:,end-2*round(hrs):end)=NaN;
 %%
 % Coastline data set and coordinate limits around N. Pacific Basin:
-latlim = [10 70];
-lonlim = [120 260];
+latlim = [-20 -45];
+lonlim = [-90 -60];
 load coastlines
 
 % Plot contours of SST' on world map for each date in summerDates

@@ -75,7 +75,7 @@ foo = NaN(length(yd),1);
 % loop by values
 for i=1:366*24
     values = ismembertol(yd,yhr(i));
-    mu = nanmean(sst(values));
+    mu = mean(sst(values),'omitnan');
     foo(values) = mu;
 end 
 % Stitch 5 instances of foo together to filter
@@ -113,19 +113,19 @@ ylabel('Sea Surface Temperature [^{\circ}C]','Interpreter','tex')
 %% Take anomaly
 sstA = sstf-sst0; % using low-pass filtered signal
 % sstA = sstb-sst0; % using bandpass filtered signal
-
 % Bandpass SST'
 % 10-day low-pass filter
 sstA = pl66tn(sstA,1,240); 
 % 6-month (half of a year) low-pass filter
 hrs = hours(years(0.5)); % define the cutoff frequency in hours
-foo6 = pl66tn(sstA,1,hours(years(0.5))); % Evaluate the low-pass filtered signal
+foo6 = pl66tn(sstA,1,hrs); % Evaluate the low-pass filtered signal
 
 % Take high-pass part of signal
 sstA = sstA-foo6;
 % Replace one window-length with NaNs on each end
 sstA(1:2*round(hrs))=NaN;
 sstA(end-2*round(hrs):end)=NaN;
+
 
 sig = nanstd(sstA);
 mean = nanmean(sstA);
