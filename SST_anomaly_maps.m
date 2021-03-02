@@ -73,14 +73,22 @@ sstSwA = sstSwA-lp6mo;
 % Replace one window-length with NaNs on each end
 sstSwA(:,:,1:2*round(hrs))=NaN;
 sstSwA(:,:,end-2*round(hrs):end)=NaN;
+
 %%
-% Coastline data set and coordinate limits around N. Pacific Basin:
-latlim = [-20 -45];
-lonlim = [-90 -60];
+% Coastline data set and coordinate limits around Chile-Peru System:
+latlim = [min(lat) max(lat)];
+lonlim = [min(lon) max(lon)];
 load coastlines
 
 % Plot contours of SST' on world map for each date in summerDates
-figure(1)
-worldmap(latlim,lonlim) % Map around N. Pacific
-plotm(coastlat,coastlon) % Adds coastlines
-[C,h] = contourm(Lat,Lon,sstA); % Contour of SLP levels for every 2 mbar
+for n = 1:length(summerDates)
+    t0 = ismembertol(time1,summerDates(n),hours(3)); % Finds which 6-hourly time is nearest to summerDates(n)
+    % Since our tolerance is 3 hours the window of tolerance around each
+    % summerDate is 6 hours wide, there is no possibility of having 2 t0's
+    figure(n)
+    worldmap(latlim,lonlim) % Map over Chile-Peru System
+    plotm(coastlat,coastlon) % Adds coastlines
+    [C,h] = contourm(Lat,Lon,sstSwA(:,:,t0)); % Contour of SST'
+end
+
+
