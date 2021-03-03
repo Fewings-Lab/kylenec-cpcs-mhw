@@ -7,7 +7,8 @@
 % Open data from the .nc file
 finfo = ncinfo('Data/ChileCoast-SST-6H.nc');
 data = ncreads(finfo.Filename);
-sstSw1 = squeeze(data.sst(1:81,:,1,:))-273.15;% Getting rid of most of the landmass
+sstSw1 = squeeze(data.sst(1:81,:,1,:))-273.15;% Getting rid of most of the landmass and convert to degC
+% sstSw1 for 'raw swath SST', or as close to raw as ERA-5 can be
 lat = double(squeeze(data.latitude));
 lon = double(squeeze(data.longitude));
 lon = lon(1:81); % Drop most of the landmass
@@ -21,13 +22,24 @@ time1 = double(time)/24 + datenum('1900-01-01 00:00:00');
 % time2 = dateshift(time2, 'start', 'hour', 'nearest'); % shifts datetimes to nearest hour
 time1 = datetime(time1,'ConvertFrom','datenum'); % convert non-interpolated time to datetimes
 
+% % Save the relevant variables to a .mat file
+% save('ChileCoast_SST_6H.mat','lat','lon','sstSw1','time1','summerDates')
+
+% [Ignore this because it requires too much RAM:]
 % Linearly interpolate 6-hrly SST (constant daily values) onto hourly grid
 % sstSw2 = interp3(lat,lon,time1,sstSw1,lat,lon,datenum(time2));
 
-% Low-pass filter SST
-sstLP = NaN(size(sstSw1));
-for i=1:length(lon)
-    sstLP(i,:,:) = (pl66tn(squeeze(sstSw1(i,:,:)),1,240))';
+
+% Import variables from ChileCost_SST_6H.mat
+% load('ChileCoast_SST_6H.mat')
+% Contains: sstSw1 in degC, lat [-45 -20], lon [-90 -70], time1 which is a
+% 6-hourly datetime vector, and summerDates which is a datetime vector of
+% times we want to plot at the end of this script
+
+% Low-pass filter SST with a 10-day pl66 filter
+sstLP = NaN(size(sstSw1)); % This will be the 10 low-pass filtered SST swath
+for i=1:length(lon) % Looping through longitude slices because the pl66 filter only handles 2D matrices
+    sstLP(i,:,:) = (pl66tn(squeeze(sstSw1(i,:,:)),6,240))'; % Don't forget that for 6-hourly data, dt=6
 end
 %%
 % Make a climatological annual cycle for each lat, lon pair
@@ -39,7 +51,7 @@ yhr = 1:1/4:(367-1/4);
 % Vector to store climatology
 sstSw0 = NaN(size(sstSw1));
 
-% loop by values
+% loop by yearday w/ time
 for i=1:366*4
    times = ismembertol(yd,yhr(i)); % Logical of times in the 42-yr record that match the yearday and time
    mu = mean(sstSw1(:,:,times),3,'omitnan'); % take the mean along time dimension
@@ -52,12 +64,12 @@ end
 % Low-pass filter climatological annual cycle
 for l=1:length(lon) % loop along one spatial dimension since pl66 can only filter 2D arrays,
     % we can use either as long as time is the longer dimension
-    sstSw0(l,:,:) = (pl66tn(squeeze(sstSw0(l,:,:)),1,240))'; % apply filter and assign to 2D longitude slice
+    sstSw0(l,:,:) = (pl66tn(squeeze(sstSw0(l,:,:)),6,240))'; % apply filter and assign to 2D longitude slice
 end
 
 %%
-% Take difference between sstSw1 and sstSw0 to find SST'
-sstSwA = sstSw1-sstSw0;
+% Take difference between sstLP and sstSw0 to find SST'
+sstSwA = sstLP-sstSw0;
 
 % Bandpass SST' by applying 6-month high-pass filter
 
@@ -66,7 +78,7 @@ hrs = hours(years(0.5)); % define the cutoff frequency in hours
 lp6mo = nan(size(sstSwA)); % Initialize empty matrix to hold low-pass part
 for m=1:length(lon) % loop along one spatial dimension since pl66 can only filter 2D arrays,
     % we can use either as long as time is the longer dimension
-    lp6mo(m,:,:) = pl66tn(squeeze(sstSwA(m,:,:)),1,hrs)'; % Evaluate the low-pass filtered signal  and assign to 2D longitude slice
+    lp6mo(m,:,:) = pl66tn(squeeze(sstSwA(m,:,:)),6,hrs)'; % Evaluate the low-pass filtered signal  and assign to 2D longitude slice
 end
 % Take high-pass part of signal
 sstSwA = sstSwA-lp6mo;
@@ -77,14 +89,24 @@ sstSwA(:,:,end-2*round(hrs):end)=NaN;
 %%
 % Coastline data set and coordinate limits around Chile-Peru System:
 latlim = [min(lat) max(lat)];
-lonlim = [min(lon) max(lon)];
+lonlim = [min(lon) max(lon)]; % works for negative longitude, but will have to switch min/max if lon is in [0 360]
 load coastlines
+Lat = ones(length(lon),1)*lat';
+Lon = lon*ones(1,length(lat));
 
+A = datenum(time1);
 % Plot contours of SST' on world map for each date in summerDates
 for n = 1:length(summerDates)
-    t0 = ismembertol(time1,summerDates(n),hours(3)); % Finds which 6-hourly time is nearest to summerDates(n)
-    % Since our tolerance is 3 hours the window of tolerance around each
+    B = datenum(summerDates(n));
+    tol = datenum(hours(3))/max(abs([A(:);B(:)]));
+    
+    t0 = ismembertol(A,B,tol); % Finds which 6-hourly time is nearest to summerDates(n)
+    % [Here is where I went wrong and this is what I thought would happen:] 
+    % Since our tolerance is 3 hours, the window of tolerance around each
     % summerDate is 6 hours wide, there is no possibility of having 2 t0's
+    % [What actually happened: the logical t0 was true for every time and
+    % that should not have happened with the tolerance so small compared to
+    % the dates]
     figure(n)
     worldmap(latlim,lonlim) % Map over Chile-Peru System
     plotm(coastlat,coastlon) % Adds coastlines
