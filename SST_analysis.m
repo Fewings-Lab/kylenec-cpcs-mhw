@@ -148,7 +148,7 @@ legend("SST'","\pm 2 \sigma_{SST'}")
 
 %% First-order approximation of dSST'/dt
 dsstdt = sstA(2:end)-sstA(1:end-1); % Using a difference approximation
-dsstdtf = pl66tn(dsstdt,1,(3*7*24)); % low-pass filter dSST'/dt with 7-day cutoff
+dsstdtf = pl66tn(dsstdt,1,(3*7*24)); % low-pass filter dSST'/dt with 3-week cutoff
 dsstdtf = dsstdtf*24; % Convert to change to degC/day from degC/hr
 
 % Plot of SST' and dt in same figure with 2 y-axes

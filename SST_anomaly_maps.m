@@ -83,8 +83,8 @@ end
 % Take high-pass part of signal
 sstSwA = sstSwA-lp6mo;
 % Replace one window-length with NaNs on each end
-sstSwA(:,:,1:2*round(hrs))=NaN;
-sstSwA(:,:,end-2*round(hrs):end)=NaN;
+sstSwA(:,:,1:2*round(hrs/6))=NaN;
+sstSwA(:,:,end-2*round(hrs/6):end)=NaN;
 
 %%
 % Coastline data set and coordinate limits around Chile-Peru System:
@@ -93,6 +93,7 @@ lonlim = [min(lon) max(lon)]; % works for negative longitude, but will have to s
 load coastlines
 Lat = ones(length(lon),1)*lat';
 Lon = lon*ones(1,length(lat));
+clim = [min(sstSwA,[],'all') max(sstSwA,[],'all')];
 
 A = datenum(time1);
 % Plot contours of SST' on world map for each date in summerDates
@@ -110,7 +111,13 @@ for n = 1:length(summerDates)
     figure(n)
     worldmap(latlim,lonlim) % Map over Chile-Peru System
     plotm(coastlat,coastlon) % Adds coastlines
-    [C,h] = contourm(Lat,Lon,sstSwA(:,:,t0)); % Contour of SST'
+    if sum(t0)>1
+        [C,h] = contourm(Lat,Lon,mean(sstSwA(:,:,t0),3,'omitnan'),'Fill','on'); % Contour of SST'
+        caxis(clim)
+    else
+        [C,h] = contourm(Lat,Lon,sstSwA(:,:,t0),'Fill','on'); % Contour of SST'
+        caxis(clim)
+    end
 end
 
 
