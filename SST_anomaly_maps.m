@@ -108,16 +108,42 @@ for n = 1:length(summerDates)
     % [What actually happened: the logical t0 was true for every time and
     % that should not have happened with the tolerance so small compared to
     % the dates]
-    figure(n)
-    worldmap(latlim,lonlim) % Map over Chile-Peru System
-    plotm(coastlat,coastlon) % Adds coastlines
-    if sum(t0)>1
-        [C,h] = contourm(Lat,Lon,mean(sstSwA(:,:,t0),3,'omitnan'),'Fill','on'); % Contour of SST'
-        caxis(clim)
-    else
-        [C,h] = contourm(Lat,Lon,sstSwA(:,:,t0),'Fill','on'); % Contour of SST'
-        caxis(clim)
+    if n<=16
+        figure(1)
+        subplot(4,4,n)
+        worldmap(latlim,lonlim) % Map over Chile-Peru System
+        plotm(coastlat,coastlon) % Adds coastlines
+        if sum(t0)>1
+            [C,h] = contourm(Lat,Lon,mean(sstSwA(:,:,t0),3,'omitnan'),'Fill','on'); % Contour of SST'
+            caxis(clim)
+        else
+            [C,h] = contourm(Lat,Lon,sstSwA(:,:,t0),'Fill','on'); % Contour of SST'
+            caxis(clim)
+        end
+        title(datestr(summerDates(n)))
+    elseif n>=17
+        figure(2)
+        subplot(4,4,n-16)
+        worldmap(latlim,lonlim) % Map over Chile-Peru System
+        plotm(coastlat,coastlon) % Adds coastlines
+        if sum(t0)>1
+            [C,h] = contourm(Lat,Lon,mean(sstSwA(:,:,t0),3,'omitnan'),'Fill','on'); % Contour of SST'
+            caxis(clim)
+        else
+            [C,h] = contourm(Lat,Lon,sstSwA(:,:,t0),'Fill','on'); % Contour of SST'
+            caxis(clim)
+        end
+        title(datestr(summerDates(n)))
     end
 end
+
+figure(1)
+sgtitle("SST'")
+hp4 = get(subplot(4,4,16),'Position');
+colorbar('Position', [hp4(1)+hp4(3)+0.01  hp4(2)  0.01  hp4(2)+hp4(3)*4.1])
+figure(2)
+sgtitle("SST'")
+hp4 = get(subplot(4,4,16),'Position');
+colorbar('Position', [hp4(1)+hp4(3)+0.01  hp4(2)  0.01  hp4(2)+hp4(3)*4.1])
 
 
