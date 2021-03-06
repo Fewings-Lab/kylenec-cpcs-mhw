@@ -75,7 +75,7 @@ foo = NaN(length(yd),1);
 % loop by values
 for i=1:366*24
     values = ismembertol(yd,yhr(i));
-    mu = mean(sst(values),'omitnan');
+    mu = muA(sst(values),'omitnan');
     foo(values) = mu;
 end 
 % Stitch 5 instances of foo together to filter
@@ -127,8 +127,8 @@ sstA(1:2*round(hrs))=NaN;
 sstA(end-2*round(hrs):end)=NaN;
 
 
-sig = nanstd(sstA);
-mean = nanmean(sstA);
+sigA = nanstd(sstA);
+muA = nanmean(sstA);
 
 % Plot SST'
 figure(9)
@@ -140,9 +140,9 @@ title("10-day to 6-month Bandpass Filtered Sea Surface Temperature Anomaly at 35
 xlabel('Date')
 datetick('x','yyyy-mmm','keeplimits','keepticks')
 hold on
-yline(mean+2*sig,'--','Color',[0.00,0.45,0.74])
-yline(mean-2*sig,'--','Color',[0.00,0.45,0.74])
-yline(mean,'-k')
+yline(muA+2*sigA,'--','Color',[0.00,0.45,0.74])
+yline(muA-2*sigA,'--','Color',[0.00,0.45,0.74])
+yline(muA,'-k')
 ylabel("SST' [^{\circ}C]",'Interpreter','tex')
 legend("SST'","\pm 2 \sigma_{SST'}")
 
@@ -165,8 +165,8 @@ hold on
 yline(0,'-k')
 xlabel('Date')
 datetick('x','yyyy-mmm','keeplimits','keepticks')
-yline(mean+2*sig,'--','Color',[0.00,0.45,0.74])
-yline(mean-2*sig,'--','Color',[0.00,0.45,0.74])
+yline(muA+2*sigA,'--','Color',[0.00,0.45,0.74])
+yline(muA-2*sigA,'--','Color',[0.00,0.45,0.74])
 ylabel("SST' [^{\circ}C]",'Interpreter','tex')
 
 % Right axis with dSST'/dt
@@ -193,7 +193,7 @@ SSTlm = islocalmax(sstA);
 dSSTlm = islocalmax(dsstdtf);
 
 % Now we will further limit these with SST' that are only above two stds
-warmest  = sstA > (mean+2*sig);
+warmest  = sstA > (muA+2*sigA);
 
 % Then select only these values to plot with symbols using logical arrays
 % and "AND" operator
@@ -235,8 +235,8 @@ plot(summerDates,summerSSTa,'*','MarkerSize',12,'LineWidth',1)
 yline(0,'-k')
 xlabel('Date')
 datetick('x','yyyy-mmm','keeplimits','keepticks')
-yline(mean+2*sig,'--','Color',[0.00,0.45,0.74])
-yline(mean-2*sig,'--','Color',[0.00,0.45,0.74])
+yline(muA+2*sigA,'--','Color',[0.00,0.45,0.74])
+yline(muA-2*sigA,'--','Color',[0.00,0.45,0.74])
 ylabel("SST' [^{\circ}C]",'Interpreter','tex')
 
 yyaxis right

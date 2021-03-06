@@ -111,39 +111,44 @@ for n = 1:length(summerDates)
     if n<=16
         figure(1)
         subplot(4,4,n)
-        worldmap(latlim,lonlim) % Map over Chile-Peru System
+        h = worldmap(latlim,lonlim); % Map over Chile-Peru System
+        setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
         plotm(coastlat,coastlon) % Adds coastlines
         if sum(t0)>1
-            [C,h] = contourm(Lat,Lon,mean(sstSwA(:,:,t0),3,'omitnan'),'Fill','on'); % Contour of SST'
+            [C,~] = contourm(Lat,Lon,mean(sstSwA(:,:,t0),3,'omitnan'),'Fill','on'); % Contour of SST'
             caxis(clim)
         else
-            [C,h] = contourm(Lat,Lon,sstSwA(:,:,t0),'Fill','on'); % Contour of SST'
+            [C,~] = contourm(Lat,Lon,sstSwA(:,:,t0),'Fill','on'); % Contour of SST'
             caxis(clim)
         end
         title(datestr(summerDates(n)))
+        cmocean('balance','pivot',0)
     elseif n>=17
         figure(2)
         subplot(4,4,n-16)
-        worldmap(latlim,lonlim) % Map over Chile-Peru System
+        h = worldmap(latlim,lonlim); % Map over Chile-Peru System
+        setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
         plotm(coastlat,coastlon) % Adds coastlines
         if sum(t0)>1
-            [C,h] = contourm(Lat,Lon,mean(sstSwA(:,:,t0),3,'omitnan'),'Fill','on'); % Contour of SST'
+            [C,~] = contourm(Lat,Lon,mean(sstSwA(:,:,t0),3,'omitnan'),'Fill','on'); % Contour of SST'
             caxis(clim)
         else
-            [C,h] = contourm(Lat,Lon,sstSwA(:,:,t0),'Fill','on'); % Contour of SST'
+            [C,~] = contourm(Lat,Lon,sstSwA(:,:,t0),'Fill','on'); % Contour of SST'
             caxis(clim)
         end
         title(datestr(summerDates(n)))
+        cmocean('balance','pivot',0)
     end
 end
 
 figure(1)
-sgtitle("SST'")
+sgtitle("Band-pass Filtered Sea Surface Temperature Anomaly")
 hp4 = get(subplot(4,4,16),'Position');
-colorbar('Position', [hp4(1)+hp4(3)+0.01  hp4(2)  0.01  hp4(2)+hp4(3)*4.1])
+c = colorbar('Position', [hp4(1)+hp4(3)+0.01  hp4(2)  0.01  hp4(2)+hp4(3)*4.1]);
+c.Label.String = "SST' [$^\circ$]";
 figure(2)
-sgtitle("SST'")
+sgtitle("Band-pass Filtered Sea Surface Temperature Anomaly")
 hp4 = get(subplot(4,4,16),'Position');
-colorbar('Position', [hp4(1)+hp4(3)+0.01  hp4(2)  0.01  hp4(2)+hp4(3)*4.1])
-
+c = colorbar('Position', [hp4(1)+hp4(3)+0.01  hp4(2)  0.01  hp4(2)+hp4(3)*4.1]);
+c.Label.String = "SST' [$^\circ$]";
 
