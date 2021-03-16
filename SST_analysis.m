@@ -75,7 +75,7 @@ foo = NaN(length(yd),1);
 % loop by values
 for i=1:366*24
     values = ismembertol(yd,yhr(i));
-    mu = muA(sst(values),'omitnan');
+    mu = mean(sst(values),'omitnan');
     foo(values) = mu;
 end 
 % Stitch 5 instances of foo together to filter
@@ -127,8 +127,8 @@ sstA(1:2*round(hrs))=NaN;
 sstA(end-2*round(hrs):end)=NaN;
 
 
-sigA = nanstd(sstA);
-muA = nanmean(sstA);
+sigA = std(sstA,'omitnan');
+muA = mean(sstA,'omitnan');
 
 % Plot SST'
 figure(9)

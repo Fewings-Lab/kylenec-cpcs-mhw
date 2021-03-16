@@ -86,6 +86,28 @@ sstSwA = sstSwA-lp6mo;
 sstSwA(:,:,1:2*round(hrs/6))=NaN;
 sstSwA(:,:,end-2*round(hrs/6):end)=NaN;
 
+%% 
+% Find the points corresponding to the time series that we will plot or
+% "set our clock" with
+ptLat = [-35.5 -41];
+ptLon = [-72.75 -75];
+ind = NaN(2);
+ind(1,:) = find(ismembertol(lat,ptLat));
+ind(2,:) = flip(find(ismembertol(lon,ptLon)));
+
+% Extract and plot these time series
+% note sstSwA dimension order is lon,lat,time and ind dimension order is
+% 1st row lat, 2nd row lon
+ts1 = squeeze(sstSwA(ind(2,1),ind(1,1),:)); % point near Punta Lavapie (-35.5, -72.75)
+ts2 = squeeze(sstSwA(ind(2,2),ind(1,2),:)); % point further south
+
+% plot
+figure(1)
+plot(time1,ts1,'k-',time1,ts2,'r-.')
+legend("SST' at "+num2str(abs(ptLat(1)))+"S, "+num2str(abs(ptLon(1)))+"W", "SST' at "+num2str(abs(ptLat(2)))+"S, "+num2str(abs(ptLon(2)))+"W")
+title("Sea surface temperature anomaly at two points in the CPS")
+xlabel("Date")
+ylabel("SST' [^\circC]")
 %%
 % Coastline data set and coordinate limits around Chile-Peru System:
 latlim = [min(lat) max(lat)];
@@ -94,6 +116,7 @@ load coastlines
 Lat = ones(length(lon),1)*lat';
 Lon = lon*ones(1,length(lat));
 clim = [min(sstSwA,[],'all') max(sstSwA,[],'all')];
+yc = [255, 255, 0;0, 255, 255];
 
 A = datenum(time1);
 % Plot contours of SST' on world map for each date in summerDates
@@ -109,7 +132,7 @@ for n = 1:length(summerDates)
     % that should not have happened with the tolerance so small compared to
     % the dates]
     if n<=16
-        figure(1)
+        figure(2)
         subplot(4,4,n)
         h = worldmap(latlim,lonlim); % Map over Chile-Peru System
         setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
@@ -123,8 +146,9 @@ for n = 1:length(summerDates)
         end
         title(datestr(summerDates(n)))
         cmocean('balance','pivot',0)
+        scatterm(ptLat,ptLon,20,yc,'filled')
     elseif n>=17
-        figure(2)
+        figure(3)
         subplot(4,4,n-16)
         h = worldmap(latlim,lonlim); % Map over Chile-Peru System
         setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
@@ -138,17 +162,69 @@ for n = 1:length(summerDates)
         end
         title(datestr(summerDates(n)))
         cmocean('balance','pivot',0)
+        scatterm(ptLat,ptLon,20,yc,'filled')
     end
 end
 
-figure(1)
-sgtitle("Band-pass Filtered Sea Surface Temperature Anomaly")
-hp4 = get(subplot(4,4,16),'Position');
-c = colorbar('Position', [hp4(1)+hp4(3)+0.01  hp4(2)  0.01  hp4(2)+hp4(3)*4.1]);
-c.Label.String = "SST' [$^\circ$]";
 figure(2)
 sgtitle("Band-pass Filtered Sea Surface Temperature Anomaly")
 hp4 = get(subplot(4,4,16),'Position');
 c = colorbar('Position', [hp4(1)+hp4(3)+0.01  hp4(2)  0.01  hp4(2)+hp4(3)*4.1]);
-c.Label.String = "SST' [$^\circ$]";
+c.Label.String = "SST' [^\circC]";
+c.Label.FontSize = 14;
+figure(3)
+sgtitle("Band-pass Filtered Sea Surface Temperature Anomaly")
+hp4 = get(subplot(4,4,16),'Position');
+c = colorbar('Position', [hp4(1)+hp4(3)+0.01  hp4(2)  0.01  hp4(2)+hp4(3)*4.1]);
+c.Label.String = "SST' [^\circC]";
+c.Label.FontSize = 14;
 
+%% 
+% Scatter plot of the two time series against each other (Correlation plot)
+
+figure(4)
+scatter(ts1,ts2,2,'filled')
+title("Correlation of SST' between northern and southern points")
+xlabel("SST' time series 1 (Punta Lavapie)")
+ylabel("SST' time series 2 (southern point)")
+
+% Selecting events that occur in Dec-Feb
+monthnum = dv(:, 2); % Grab month number vector
+tupwell = find(monthnum <3 | monthnum==12); % corresponding time indices
+
+figure(5)
+scatter(ts1(tupwell),ts2(tupwell),2,'filled')
+title("Correlation of SST' between northern and southern points during the upwelling season")
+xlabel("SST' time series 1 (Punta Lavapie)")
+ylabel("SST' time series 2 (southern point)")
+
+
+
+% Scatter plot of the dates we mapped
+D = datenum(summerDates);
+tol = datenum(hours(3))/max(abs([A(:);D(:)]));
+E = ismembertol(A,D,tol);
+
+figure(6)
+scatter(ts1(E),ts2(E),6,'filled')
+title("Correlation of SST' between northern and southern points during dates of max SST' during the upwelling season")
+xlabel("SST' time series 1 (Punta Lavapie)")
+ylabel("SST' time series 2 (southern point)")
+
+
+%% 
+% Map of std at each point
+stdSwA = std(sstSwA,0,3,'omitnan');
+
+figure(7)
+h = worldmap(latlim,lonlim); % Map over Chile-Peru System
+setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
+plotm(coastlat,coastlon) % Adds coastlines
+[C,~] = contourm(Lat,Lon,stdSwA,'Fill','on'); % Contour of SST'
+caxis([min(stdSwA,[],'all') max(stdSwA,[],'all')])
+cmocean('balance')
+scatterm(ptLat,ptLon,20,yc,'filled')
+title("Standard deviation of Band-pass Filtered Sea Surface Temperature Anomaly")
+c = colorbar();
+c.Label.String = "\sigma_{SST'} [^\circC]";
+c.Label.FontSize = 14;
