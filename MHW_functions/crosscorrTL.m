@@ -1,10 +1,9 @@
-% autocorrTL.m
+% crosscorrTL.m
 % Kylene Cooley
-% May 2020
-% Revised 16 Mar 2021
-% Computes the symmetric time-lagged autocorrelation given an array and the maximum
-% time lag desired
-function rhoyy = autocorrTL(Y,maxlag)
+% 16 Mar 2021
+% Computes the symmetric time-lagged cross-correlation given two arrays and the maximum
+% time lag desired. X and Y must be the same length??
+function rhoyy = crosscorrTL(X, Y,maxlag)
     rhoyy = zeros((2*maxlag+1),1);
     Ntot = length(Y);
     % compute and plot sample time-lagged autocorrelations:
