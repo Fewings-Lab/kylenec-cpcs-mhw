@@ -3,7 +3,8 @@
 % 16 Mar 2021
 % Computes the symmetric time-lagged cross-correlation given two arrays and the maximum
 % time lag desired. X and Y must be the same length??
-function rhoyy = crosscorrTL(X, Y,maxlag)
+
+function rhoyy = crosscorrTL(X,Y,maxlag)
     rhoyy = zeros((2*maxlag+1),1);
     Ntot = length(Y);
     % compute and plot sample time-lagged autocorrelations:
@@ -13,7 +14,7 @@ function rhoyy = crosscorrTL(X, Y,maxlag)
         nn1 = 1:1:Ntot-tau;
         nn2 = 1+tau:1:Ntot;
         % use tau to extract xx and yy
-        xx = Y(nn1);
+        xx = X(nn1);
         yy = Y(nn2);
         % find Ryy
         Ryy = acov(xx,yy);
@@ -21,11 +22,13 @@ function rhoyy = crosscorrTL(X, Y,maxlag)
         rhoyy(maxlag+1+tau) = acor(Ryy,xx,yy);
         if tau > 0
             % negative lag
-            % Switch order of xx and yy in autocovariance and autocorrelation
-            % find Ryy
-            Ryy = acov(yy,xx);
+            % Switch indices of xx and yy in autocovariance and autocorrelation
+            xx = X(nn2);
+            yy = Y(nn1);
+            % find Ryy - keep the order the same between xx and yy
+            Ryy = acov(xx,yy);
             % get rhoyy
-            rhoyy(maxlag+1-tau) = acor(Ryy,yy,xx);
+            rhoyy(maxlag+1-tau) = acor(Ryy,xx,yy);
         end
     end
 end

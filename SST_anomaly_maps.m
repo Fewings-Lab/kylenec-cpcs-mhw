@@ -108,6 +108,12 @@ legend("SST' at "+num2str(abs(ptLat(1)))+"S, "+num2str(abs(ptLon(1)))+"W", "SST'
 title("Sea surface temperature anomaly at two points in the CPS")
 xlabel("Date")
 ylabel("SST' [^\circC]")
+
+% figure(2)
+% plot((-maxlag:maxlag),rhoyy)
+% title('Cross-correlation of SST(t) and SLP(t+\tau) at Grid Point 60')
+% ylabel('\rho_{xy}(\tau)')
+% xlabel('Time Lag [Month Number]')
 %%
 % Coastline data set and coordinate limits around Chile-Peru System:
 latlim = [min(lat) max(lat)];
