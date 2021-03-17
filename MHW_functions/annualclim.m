@@ -4,7 +4,7 @@
 % Returns annual climatology that is the same length of input time series
 % and is filtered with Tc low-pass filter
 
-function dat0 = annualclim(dn, dat, dt, Tc)
+function dat0 = annualclim(dat, dn, dt, Tc)
     % Convert datenums to date vector [yy mm dd hh mm ss]
     dv = datevec(dn); 
 
@@ -13,11 +13,11 @@ function dat0 = annualclim(dn, dat, dt, Tc)
     yd = dn - datenum(dv(:,1),1,1) + 1; 
 
     % Vectors to use for matching times and storing climatology
-    yhr = 1:(dt/24):(367-1/24);
+    yhr = 1:(dt/24):(367-(24/dt));
     foo = NaN(length(yd),1);
 
     % loop by values
-    for i=1:366*24
+    for i=1:366*(24/dt)
         values = ismembertol(yd,yhr(i));
         mu = mean(dat(values),'omitnan');
         foo(values) = mu;

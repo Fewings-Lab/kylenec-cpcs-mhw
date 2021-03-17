@@ -41,31 +41,12 @@ sstLP = NaN(size(sstSw1)); % This will be the 10 low-pass filtered SST swath
 for i=1:length(lon) % Looping through longitude slices because the pl66 filter only handles 2D matrices
     sstLP(i,:,:) = (pl66tn(squeeze(sstSw1(i,:,:)),6,240))'; % Don't forget that for 6-hourly data, dt=6
 end
+
 %%
 % Make a climatological annual cycle for each lat, lon pair
 dn = datenum(time1); % convert to datenum
-dv = datevec(time1); % Convert to datevec
-yd = dn - datenum(dv(:,1),1,1) + 1; % Convert to yearday
-% Vector to use for matching times to 6-hourly data
-yhr = 1:1/4:(367-1/4);
-% Vector to store climatology
-sstSw0 = NaN(size(sstSw1));
 
-% loop by yearday w/ time
-for i=1:366*4
-   times = ismembertol(yd,yhr(i)); % Logical of times in the 42-yr record that match the yearday and time
-   mu = mean(sstSw1(:,:,times),3,'omitnan'); % take the mean along time dimension
-   k = find(times); % Indices of the nonzero points in times
-   for j = 1:length(k) % Loop through these times
-       sstSw0(:,:,k(j)) = mu; % Assign 2D mean array to the time slice
-   end
-end 
-
-% Low-pass filter climatological annual cycle
-for l=1:length(lon) % loop along one spatial dimension since pl66 can only filter 2D arrays,
-    % we can use either as long as time is the longer dimension
-    sstSw0(l,:,:) = (pl66tn(squeeze(sstSw0(l,:,:)),6,240))'; % apply filter and assign to 2D longitude slice
-end
+sstSw0 = clim1y3d(sstSw1, dn, 6, 240); % use 3D data cube climatology function
 
 %%
 % Take difference between sstLP and sstSw0 to find SST'

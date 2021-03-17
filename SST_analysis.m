@@ -61,41 +61,11 @@ ylabel('SST [^{\circ}C]','Interpreter','tex')
 
 
 %% Obtain climatology
-% Convert datenums to date vector [yy mm dd hh mm ss]
-dv = datevec(dn); 
 
-% Calculate yearday by subtracting the datenum of Jan 1 of that year 
-% (and add 1 so the first day of the year is yearday 1 not 0)
-yd = dn - datenum(dv(:,1),1,1) + 1; 
-
-% Vectors to use for matching times and storing climatology
-yhr = 1:1/24:(367-1/24);
-foo = NaN(length(yd),1);
-
-% loop by values
-for i=1:366*24
-    values = ismembertol(yd,yhr(i));
-    mu = mean(sst(values),'omitnan');
-    foo(values) = mu;
-end 
-% Stitch 5 instances of foo together to filter
-foo2 = cat(1,foo,foo,foo,foo,foo);
-
-% Filter the working variable
-foo3 = pl66tn(foo2,1,240); % apply 10-day filter
-% foo4 = pl66tn(foo3,1,hours(years(0.5))); % 6-month (half of a year) low-pass filter
-% % take high-pass part of signal to bandpass
-% foo5 = foo3-foo4;
-
-% % If we did the high-pass filter first:
-% foo3 = pl66tn(foo2,1,hours(years(0.5))); % 6-month (half of a year) low-pass filter
-% % take high-pass part of signal to bandpass
-% foo4 = foo2-foo3;
-% foo5 = pl66tn(foo4,1,240); % apply 10-day filter
-
-% take only the middle portion of filtered climatology
-sst0 = foo3(2*length(yd)+1:3*length(yd)); % low-pass filtered only
-% sst0 = foo5(2*length(yd)+1:3*length(yd)); % bandpass filtered
+% Use single time series function to find an annual climatology
+dt = 1; % time between points in hours
+Tc = 240; % low-pass filter climatology with same cutoff frequency as applied to sst above
+sst0 = annualclim(sst, dn, dt, Tc); % sst, dn are contained in .mat file
 
 % Plot climatology
 figure(8)
