@@ -42,30 +42,23 @@ for i=1:length(lon) % Looping through longitude slices because the pl66 filter o
     sstLP(i,:,:) = (pl66tn(squeeze(sstSw1(i,:,:)),6,240))'; % Don't forget that for 6-hourly data, dt=6
 end
 
+sig1 = std(sstSw1,0,3,'omitnan');
 %%
 % Make a climatological annual cycle for each lat, lon pair
 dn = datenum(time1); % convert to datenum
 
-sstSw0 = clim1y3d(sstSw1, dn, 6, 240); % use 3D data cube climatology function
+[sstSw0,sig0] = clim1y3d(sstSw1, dn, 6, 240); % use 3D data cube climatology function
 
 %%
+% std of unfiltered anomaly for map
+sig2 = std((sstSw1-sstSw0),0,3,'omitnan');
+
 % Take difference between sstLP and sstSw0 to find SST'
 sstSwA = sstLP-sstSw0;
 
 % Bandpass SST' by applying 6-month high-pass filter
+[sstSwA, sig4, sig5, sig6] = bandpass(sstSwA,6,240,0.5);
 
-% 6-month (half of a year) low-pass filter
-hrs = hours(years(0.5)); % define the cutoff frequency in hours
-lp6mo = nan(size(sstSwA)); % Initialize empty matrix to hold low-pass part
-for m=1:length(lon) % loop along one spatial dimension since pl66 can only filter 2D arrays,
-    % we can use either as long as time is the longer dimension
-    lp6mo(m,:,:) = pl66tn(squeeze(sstSwA(m,:,:)),6,hrs)'; % Evaluate the low-pass filtered signal  and assign to 2D longitude slice
-end
-% Take high-pass part of signal
-sstSwA = sstSwA-lp6mo;
-% Replace one window-length with NaNs on each end
-sstSwA(:,:,1:2*round(hrs/6))=NaN;
-sstSwA(:,:,end-2*round(hrs/6):end)=NaN;
 
 %% 
 % Find the points corresponding to the time series that we will plot or
