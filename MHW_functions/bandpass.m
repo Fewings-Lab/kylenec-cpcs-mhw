@@ -3,7 +3,7 @@
 % 16 Mar 2021
 % bandpass filter a function with pl66
 
-function [datbp, sigH, sigBP, sigL] = bandpass(dat,dt,TcL,TcH)
+function [datbp, sigH, sigL] = bandpass(dat,dt,TcL,TcH)
 
     % Bandpass SST'
     % low-pass filter with lower cutoff period in hours
@@ -41,7 +41,9 @@ function [datbp, sigH, sigBP, sigL] = bandpass(dat,dt,TcL,TcH)
     datbp(1:2*round(hrs))=NaN;
     datbp(end-2*round(hrs):end)=NaN;
 
-    sigBP = std(datbp,0,3,'omitnan');
+%     sigBP = std(datbp,0,3,'omitnan'); % removed from this version because
+%     of memory issues, but bandpassV2() with the same inputs will provide
+%     this
 
 
 end

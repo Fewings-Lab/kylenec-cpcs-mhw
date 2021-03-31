@@ -11,7 +11,7 @@ function [dat0, sigma] = clim1y3d(dat, dn, dt, Tc)
     dv = datevec(dn); % Convert to datevec
     yd = dn - datenum(dv(:,1),1,1) + 1; % Convert to yearday
     % Vector to use for matching times to 6-hourly data
-    yhr = 1:(24/dt):(367-(24/dt));
+    yhr = 1:(dt/24):(367-(dt/24));
     % Vector to store climatology
     dat0 = NaN(size(dat));
 

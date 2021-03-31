@@ -3,7 +3,7 @@
 % 16 Mar 2021
 % bandpass filter a function with pl66
 
-function [datbp, sigH, sigBP, sigL] = bandpass(dat,dt,TcL,TcH)
+function [datbp, sigH, sigBP, sigL] = bandpassV2(dat,dt,TcL,TcH)
 
     % Bandpass SST'
     % low-pass filter with lower cutoff period in hours

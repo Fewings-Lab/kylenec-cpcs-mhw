@@ -173,6 +173,7 @@ dsstM = dsstdtf(dSSTlm);
 tdTm  = t(dSSTlm); % times of the local maxima in dSST'
 
 % Selecting events that occur in Dec-Feb
+dv = datevec(dn);
 monthnum = dv(SSTlm & warmest, 2); % Pick month number of all of these events
 summerSSTa = sstM(monthnum <3 | monthnum==12); % make a vector of these events
 summerDates = tTm(monthnum <3 | monthnum==12); % corresponding times

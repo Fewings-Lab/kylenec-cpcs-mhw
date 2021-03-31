@@ -57,8 +57,8 @@ sig2 = std((sstSw1-sstSw0),0,3,'omitnan');
 sstSwA = sstLP-sstSw0;
 
 % Bandpass SST' by applying 6-month high-pass filter
-[sstSwA, sig4, sig5, sig6] = bandpass(sstSwA,6,240,0.5);
-
+[sstSwA, sig4, sig6] = bandpass(sstSwA,6,240,0.5); % outputs bandpassed anomaly and std of the low-pass and high-pass parts of the signal respectively
+sig5 = std(sstSwA,0,3,'omitnan'); % std of the band-pass filtered part of the anomaly
 
 %% 
 % Find the points corresponding to the time series that we will plot or
@@ -169,6 +169,7 @@ xlabel("SST' time series 1 (Punta Lavapie)")
 ylabel("SST' time series 2 (southern point)")
 
 % Selecting events that occur in Dec-Feb
+dv = datevec(dn);
 monthnum = dv(:, 2); % Grab month number vector
 tupwell = find(monthnum <3 | monthnum==12); % corresponding time indices
 

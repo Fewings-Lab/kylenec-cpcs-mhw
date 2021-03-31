@@ -13,7 +13,7 @@ function dat0 = annualclim(dat, dn, dt, Tc)
     yd = dn - datenum(dv(:,1),1,1) + 1; 
 
     % Vectors to use for matching times and storing climatology
-    yhr = 1:(dt/24):(367-(24/dt));
+    yhr = 1:(dt/24):(367-(dt/24));
     foo = NaN(length(yd),1);
 
     % loop by values
