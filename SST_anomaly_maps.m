@@ -60,6 +60,9 @@ sstSwA = sstLP-sstSw0;
 [sstSwA, sig4, sig6] = bandpass(sstSwA,6,240,0.5); % outputs bandpassed anomaly and std of the low-pass and high-pass parts of the signal respectively
 sig5 = std(sstSwA,0,3,'omitnan'); % std of the band-pass filtered part of the anomaly
 
+% save standard deviation of different parts to .mat file
+save('stdSST.mat','sig0','sig1','sig2','sig4','sig5','sig6')
+
 %% 
 % Find the points corresponding to the time series that we will plot or
 % "set our clock" with
@@ -209,3 +212,96 @@ title("Standard deviation of Band-pass Filtered Sea Surface Temperature Anomaly"
 c = colorbar();
 c.Label.String = "\sigma_{SST'} [^\circC]";
 c.Label.FontSize = 14;
+
+%% 
+% plot variability of SST and anomalies in 2x3 subplot (all dates)
+latlim = [min(lat) max(lat)];
+lonlim = [min(lon) max(lon)]; % works for negative longitude, but will have to switch min/max if lon is in [0 360]
+load coastlines
+Lat = ones(length(lon),1)*lat'; % 81x101 arrays for contour plot
+Lon = lon*ones(1,length(lat));
+clim1 = [min(sig1,[],'all') 2.75]; % colorbar limits for SST and climatology
+clim2 = [0 max(sig2,[],'all')]; % colorbar limits for SST' slower than 10 days
+yc = [255, 255, 0;0, 255, 255]; % color vector for time series pts
+
+figure(8)
+
+subplot(2,3,1)
+h = worldmap(latlim,lonlim); % Map over Chile-Peru System
+setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
+plotm(coastlat,coastlon) % Adds coastlines
+[C,~] = contourm(Lat,Lon,sig1,'Fill','on'); % Contour of std of SST
+caxis(clim1)
+title('Standard deviation of SST')
+cmocean('balance')
+scatterm(ptLat,ptLon,20,yc,'filled')
+c = colorbar();
+c.Label.String = "\sigma [^\circC]";
+c.Label.FontSize = 14;
+
+subplot(2,3,2)
+h = worldmap(latlim,lonlim); % Map over Chile-Peru System
+setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
+plotm(coastlat,coastlon) % Adds coastlines
+[C,~] = contourm(Lat,Lon,sig0,'Fill','on'); % Contour of std of SST
+caxis(clim1)
+title('Standard deviation of annual SST climatology')
+cmocean('balance')
+scatterm(ptLat,ptLon,20,yc,'filled')
+c = colorbar();
+c.Label.String = "\sigma [^\circC]";
+c.Label.FontSize = 14;
+
+subplot(2,3,3)
+h = worldmap(latlim,lonlim); % Map over Chile-Peru System
+setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
+plotm(coastlat,coastlon) % Adds coastlines
+[C,~] = contourm(Lat,Lon,sig2,'Fill','on'); % Contour of std of SST
+caxis(clim2)
+title("Standard deviation of SST'")
+cmocean('balance')
+scatterm(ptLat,ptLon,20,yc,'filled')
+c = colorbar();
+c.Label.String = "\sigma [^\circC]";
+c.Label.FontSize = 14;
+
+subplot(2,3,4)
+h = worldmap(latlim,lonlim); % Map over Chile-Peru System
+setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
+plotm(coastlat,coastlon) % Adds coastlines
+[C,~] = contourm(Lat,Lon,sig4,'Fill','on'); % Contour of std of SST
+% caxis(clim)
+title("Standard deviation of SST' in daily to 10-day band")
+cmocean('balance')
+scatterm(ptLat,ptLon,20,yc,'filled')
+c = colorbar();
+c.Label.String = "\sigma [^\circC]";
+c.Label.FontSize = 14;
+
+subplot(2,3,5)
+h = worldmap(latlim,lonlim); % Map over Chile-Peru System
+setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
+plotm(coastlat,coastlon) % Adds coastlines
+[C,~] = contourm(Lat,Lon,sig5,'Fill','on'); % Contour of std of SST
+caxis(clim2)
+title("Standard deviation of SST' in 10-day to 6-month band")
+cmocean('balance')
+scatterm(ptLat,ptLon,20,yc,'filled')
+c = colorbar();
+c.Label.String = "\sigma [^\circC]";
+c.Label.FontSize = 14;
+
+subplot(2,3,6)
+h = worldmap(latlim,lonlim); % Map over Chile-Peru System
+setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
+plotm(coastlat,coastlon) % Adds coastlines
+[C,~] = contourm(Lat,Lon,sig6,'Fill','on'); % Contour of std of SST
+caxis(clim2)
+title("Standard deviation of SST' in 6-month to 40-yr band")
+cmocean('balance')
+scatterm(ptLat,ptLon,20,yc,'filled')
+c = colorbar();
+c.Label.String = "\sigma [^\circC]";
+c.Label.FontSize = 14;
+
+sgtitle("Variability of SST and anomalies Jun 1979-Dec 2019")
