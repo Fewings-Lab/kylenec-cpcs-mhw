@@ -17,8 +17,8 @@ function [datbp, sigH, sigBP, sigL] = bandpassV2(dat,dt,TcL,TcH)
     % high pass part for variability maps
     high1 = dat-low1;
     % Replace one window-length with NaNs on each end
-    high1(1:2*round(TcL))=NaN;
-    high1(end-2*round(TcL):end)=NaN;
+    high1(:,:,1:2*round(TcL))=NaN;
+    high1(:,:,end-2*round(TcL):end)=NaN;
     % Evaluate standard deviation of highest frequency band
     sigH = std(high1,0,3,'omitnan');
 
@@ -38,8 +38,8 @@ function [datbp, sigH, sigBP, sigL] = bandpassV2(dat,dt,TcL,TcH)
     % Take high-pass part of signal
     datbp = low1-low2;
     % Replace one window-length with NaNs on each end
-    datbp(1:2*round(hrs))=NaN;
-    datbp(end-2*round(hrs):end)=NaN;
+    datbp(:,:,1:2*round(hrs))=NaN;
+    datbp(:,:,end-2*round(hrs):end)=NaN;
 
     sigBP = std(datbp,0,3,'omitnan');
 

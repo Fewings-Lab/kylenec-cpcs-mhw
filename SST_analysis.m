@@ -83,13 +83,13 @@ ylabel('Sea Surface Temperature [^{\circ}C]','Interpreter','tex')
 %% Take anomaly
 sstA = sstf-sst0; % using low-pass filtered signal
 % sstA = sstb-sst0; % using bandpass filtered signal
+
 % Bandpass SST'
 % 10-day low-pass filter
 sstA = pl66tn(sstA,1,240); 
 % 6-month (half of a year) low-pass filter
 hrs = hours(years(0.5)); % define the cutoff frequency in hours
 foo6 = pl66tn(sstA,1,hrs); % Evaluate the low-pass filtered signal
-
 % Take high-pass part of signal
 sstA = sstA-foo6;
 % Replace one window-length with NaNs on each end

@@ -78,19 +78,24 @@ ind(2,:) = flip(find(ismembertol(lon,ptLon)));
 ts1 = squeeze(sstSwA(ind(2,1),ind(1,1),:)); % point near Punta Lavapie (-35.5, -72.75)
 ts2 = squeeze(sstSwA(ind(2,2),ind(1,2),:)); % point further south
 
-% plot
-figure(1)
-plot(time1,ts1,'k-',time1,ts2,'r-.')
-legend("SST' at "+num2str(abs(ptLat(1)))+"S, "+num2str(abs(ptLon(1)))+"W", "SST' at "+num2str(abs(ptLat(2)))+"S, "+num2str(abs(ptLon(2)))+"W")
-title("Sea surface temperature anomaly at two points in the CPS")
-xlabel("Date")
-ylabel("SST' [^\circC]")
+% Time-lagged cross correlation time series between these two time series
+rho12 = crosscorrTL(ts1,ts2,480);% the last argument, or max lag is largest number of samples between two compared points
+% if the max lag in time is 120 days of 6-hourly data (4 samples/day) this
+% is a max lag of 240 samples
 
-% figure(2)
-% plot((-maxlag:maxlag),rhoyy)
-% title('Cross-correlation of SST(t) and SLP(t+\tau) at Grid Point 60')
-% ylabel('\rho_{xy}(\tau)')
-% xlabel('Time Lag [Month Number]')
+% plot
+% figure(1)
+% plot(time1,ts1,'k-',time1,ts2,'r-.')
+% legend("SST' at "+num2str(abs(ptLat(1)))+"S, "+num2str(abs(ptLon(1)))+"W", "SST' at "+num2str(abs(ptLat(2)))+"S, "+num2str(abs(ptLon(2)))+"W")
+% title("Sea surface temperature anomaly at two points in the CPS")
+% xlabel("Date")
+% ylabel("SST' [^\circC]")
+
+figure(2)
+plot((-120:1/4:120),rho12)
+title("Cross-correlation of SST' at (-35.5, -72.75) and (-41, -75)")
+ylabel('\rho_{1 2}(\tau)')
+xlabel('Time Lag [Days]')
 %%
 % Coastline data set and coordinate limits around Chile-Peru System:
 latlim = [min(lat) max(lat)];
@@ -108,12 +113,6 @@ for n = 1:length(summerDates)
     tol = datenum(hours(3))/max(abs([A(:);B(:)]));
     
     t0 = ismembertol(A,B,tol); % Finds which 6-hourly time is nearest to summerDates(n)
-    % [Here is where I went wrong and this is what I thought would happen:] 
-    % Since our tolerance is 3 hours, the window of tolerance around each
-    % summerDate is 6 hours wide, there is no possibility of having 2 t0's
-    % [What actually happened: the logical t0 was true for every time and
-    % that should not have happened with the tolerance so small compared to
-    % the dates]
     if n<=16
         figure(2)
         subplot(4,4,n)
