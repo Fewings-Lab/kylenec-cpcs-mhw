@@ -162,37 +162,37 @@ c.Label.String = "SST' [^\circC]";
 c.Label.FontSize = 14;
 
 %% 
-% Scatter plot of the two time series against each other (Correlation plot)
-
-figure(4)
-scatter(ts1,ts2,2,'filled')
-title("Correlation of SST' between northern and southern points")
-xlabel("SST' time series 1 (Punta Lavapie)")
-ylabel("SST' time series 2 (southern point)")
-
-% Selecting events that occur in Dec-Feb
-dv = datevec(dn);
-monthnum = dv(:, 2); % Grab month number vector
-tupwell = find(monthnum <3 | monthnum==12); % corresponding time indices
-
-figure(5)
-scatter(ts1(tupwell),ts2(tupwell),2,'filled')
-title("Correlation of SST' between northern and southern points during the upwelling season")
-xlabel("SST' time series 1 (Punta Lavapie)")
-ylabel("SST' time series 2 (southern point)")
-
-
-
-% Scatter plot of the dates we mapped
-D = datenum(summerDates);
-tol = datenum(hours(3))/max(abs([A(:);D(:)]));
-E = ismembertol(A,D,tol);
-
-figure(6)
-scatter(ts1(E),ts2(E),6,'filled')
-title("Correlation of SST' between northern and southern points during dates of max SST' during the upwelling season")
-xlabel("SST' time series 1 (Punta Lavapie)")
-ylabel("SST' time series 2 (southern point)")
+% % Scatter plot of the two time series against each other (Correlation plot)
+% 
+% figure(4)
+% scatter(ts1,ts2,2,'filled')
+% title("Correlation of SST' between northern and southern points")
+% xlabel("SST' time series 1 (Punta Lavapie)")
+% ylabel("SST' time series 2 (southern point)")
+% 
+% % Selecting events that occur in Dec-Feb
+% dv = datevec(dn);
+% monthnum = dv(:, 2); % Grab month number vector
+% tupwell = find(monthnum <3 | monthnum==12); % corresponding time indices
+% 
+% figure(5)
+% scatter(ts1(tupwell),ts2(tupwell),2,'filled')
+% title("Correlation of SST' between northern and southern points during the upwelling season")
+% xlabel("SST' time series 1 (Punta Lavapie)")
+% ylabel("SST' time series 2 (southern point)")
+% 
+% 
+% 
+% % Scatter plot of the dates we mapped
+% D = datenum(summerDates);
+% tol = datenum(hours(3))/max(abs([A(:);D(:)]));
+% E = ismembertol(A,D,tol);
+% 
+% figure(6)
+% scatter(ts1(E),ts2(E),6,'filled')
+% title("Correlation of SST' between northern and southern points during dates of max SST' during the upwelling season")
+% xlabel("SST' time series 1 (Punta Lavapie)")
+% ylabel("SST' time series 2 (southern point)")
 
 
 %% 

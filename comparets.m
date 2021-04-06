@@ -29,7 +29,7 @@ end
 
 dn = datenum(time1); % convert to datenum
 
-[sstSw0,sig0] = clim1y3d(sstSw1, dn, 6, 240); % use 3D data cube climatology function
+[sstSw0,~] = clim1y3d(sstSw1, dn, 6, 240); % use 3D data cube climatology function
 
 % Take difference between sstLP and sstSw0 to find SST'
 sstSwA = sstLP-sstSw0;
@@ -52,7 +52,37 @@ clear sstSw0 sstSw1 sstSwA sstLP % make space in ram for bandpass filtered anoma
 
 BP = low1-low2;
 % Replace one window-length with NaNs on each end
-BP(1:2*round(hours(years(0.5))))=NaN;
-BP(end-2*round(hours(years(0.5))):end)=NaN;
+BP(:,:,1:2*round(hours(years(0.5))))=NaN;
+BP(:,:,end-2*round(hours(years(0.5))):end)=NaN;
 
 ts4 = squeeze(BP(ind(2,1),ind(1,1),:)); % timeseries of bandpass filtered anomaly at point near Punta Lavapie (-35.5, -72.75)
+
+save('tscompare.mat','ts1','ts2','ts3','ts4','time1')
+
+
+%% Plotting the time series for comparision
+% load('tscompare.mat') % needed if running only this section
+
+figure(1)
+
+subplot(4,1,1)
+plot(time1, ts1)
+ylabel("SST' [^\circ C]")
+title("All frequencies")
+
+subplot(4,1,2)
+plot(time1, ts2)
+ylabel("SST' [^\circ C]")
+title("High frequency band (daily to 10 days)")
+
+subplot(4,1,3)
+plot(time1, ts4)
+ylabel("SST' [^\circ C]")
+title("Bandpass filtered frequencies (10 days to 6 months)")
+
+subplot(4,1,4)
+plot(time1, ts3)
+ylabel("SST' [^\circ C]")
+title("Low frequency band (6 months to record length)")
+
+sgtitle("SST anomalies in different frequency bands")
