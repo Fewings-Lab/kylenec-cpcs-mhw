@@ -104,7 +104,8 @@ load coastlines
 Lat = ones(length(lon),1)*lat';
 Lon = lon*ones(1,length(lat));
 clim = [min(sstSwA,[],'all') max(sstSwA,[],'all')];
-yc = [255, 255, 0;0, 255, 255];
+yc = [255, 255, 0;0, 255, 255]; 
+load('summerDates.mat')
 
 A = datenum(time1);
 % Plot contours of SST' on world map for each date in summerDates
@@ -120,10 +121,10 @@ for n = 1:length(summerDates)
         setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
         plotm(coastlat,coastlon) % Adds coastlines
         if sum(t0)>1
-            [C,~] = contourm(Lat,Lon,mean(sstSwA(:,:,t0),3,'omitnan'),'Fill','on'); % Contour of SST'
+            [C,~] = contourm(Lat,Lon,mean(sstSwA(:,:,t0),3,'omitnan'),100,'Fill','on'); % Contour of SST'
             caxis(clim)
         else
-            [C,~] = contourm(Lat,Lon,sstSwA(:,:,t0),'Fill','on'); % Contour of SST'
+            [C,~] = contourm(Lat,Lon,sstSwA(:,:,t0),100,'Fill','on'); % Contour of SST'
             caxis(clim)
         end
         title(datestr(summerDates(n)))
@@ -136,10 +137,10 @@ for n = 1:length(summerDates)
         setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
         plotm(coastlat,coastlon) % Adds coastlines
         if sum(t0)>1
-            [C,~] = contourm(Lat,Lon,mean(sstSwA(:,:,t0),3,'omitnan'),'Fill','on'); % Contour of SST'
+            [C,~] = contourm(Lat,Lon,mean(sstSwA(:,:,t0),3,'omitnan'),100,'Fill','on'); % Contour of SST'
             caxis(clim)
         else
-            [C,~] = contourm(Lat,Lon,sstSwA(:,:,t0),'Fill','on'); % Contour of SST'
+            [C,~] = contourm(Lat,Lon,sstSwA(:,:,t0),100,'Fill','on'); % Contour of SST'
             caxis(clim)
         end
         title(datestr(summerDates(n)))
@@ -229,7 +230,7 @@ subplot(2,3,1)
 h = worldmap(latlim,lonlim); % Map over Chile-Peru System
 setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
 plotm(coastlat,coastlon) % Adds coastlines
-[C,~] = contourm(Lat,Lon,sig1,'Fill','on'); % Contour of std of SST
+[C,~] = contourm(Lat,Lon,sig1,100,'Fill','on'); % Contour of std of SST
 caxis(clim1)
 title('Standard deviation of SST')
 cmocean('balance')
@@ -242,7 +243,7 @@ subplot(2,3,2)
 h = worldmap(latlim,lonlim); % Map over Chile-Peru System
 setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
 plotm(coastlat,coastlon) % Adds coastlines
-[C,~] = contourm(Lat,Lon,sig0,'Fill','on'); % Contour of std of SST
+[C,~] = contourm(Lat,Lon,sig0,100,'Fill','on'); % Contour of std of SST
 caxis(clim1)
 title('Standard deviation of annual SST climatology')
 cmocean('balance')
@@ -255,7 +256,7 @@ subplot(2,3,3)
 h = worldmap(latlim,lonlim); % Map over Chile-Peru System
 setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
 plotm(coastlat,coastlon) % Adds coastlines
-[C,~] = contourm(Lat,Lon,sig2,'Fill','on'); % Contour of std of SST
+[C,~] = contourm(Lat,Lon,sig2,100,'Fill','on'); % Contour of std of SST
 caxis(clim2)
 title("Standard deviation of SST'")
 cmocean('balance')
@@ -268,7 +269,7 @@ subplot(2,3,4)
 h = worldmap(latlim,lonlim); % Map over Chile-Peru System
 setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
 plotm(coastlat,coastlon) % Adds coastlines
-[C,~] = contourm(Lat,Lon,sig4,'Fill','on'); % Contour of std of SST
+[C,~] = contourm(Lat,Lon,sig4,100,'Fill','on'); % Contour of std of SST
 % caxis(clim)
 title("Standard deviation of SST' in daily to 10-day band")
 cmocean('balance')
@@ -281,7 +282,7 @@ subplot(2,3,5)
 h = worldmap(latlim,lonlim); % Map over Chile-Peru System
 setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
 plotm(coastlat,coastlon) % Adds coastlines
-[C,~] = contourm(Lat,Lon,sig5,'Fill','on'); % Contour of std of SST
+[C,~] = contourm(Lat,Lon,sig5,100,'Fill','on'); % Contour of std of SST
 caxis(clim2)
 title("Standard deviation of SST' in 10-day to 6-month band")
 cmocean('balance')
@@ -294,7 +295,7 @@ subplot(2,3,6)
 h = worldmap(latlim,lonlim); % Map over Chile-Peru System
 setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
 plotm(coastlat,coastlon) % Adds coastlines
-[C,~] = contourm(Lat,Lon,sig6,'Fill','on'); % Contour of std of SST
+[C,~] = contourm(Lat,Lon,sig6,100,'Fill','on'); % Contour of std of SST
 caxis(clim2)
 title("Standard deviation of SST' in 6-month to 40-yr band")
 cmocean('balance')
