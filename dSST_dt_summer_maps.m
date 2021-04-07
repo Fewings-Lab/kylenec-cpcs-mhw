@@ -8,8 +8,15 @@ clear
 load('sstSwA.mat')
 load('summerDates.mat')
 
+% 1st order difference approximation to take partial wrt to time of SST anomaly as difference in SST in degC per 6 hours
+dSSTa = 4.*(sstSwA(:,:,2:end)-sstSwA(:,:,1:end-1));
 
-
+% indices of the lat and lon of the yellow and blue points in the data cube
+ptLat = [-35.5 -41];
+ptLon = [-72.75 -75];
+ind = NaN(2);
+ind(1,:) = find(ismembertol(lat,ptLat));
+ind(2,:) = flip(find(ismembertol(lon,ptLon)));
 
 % mapping the time rate of change of the anomaly
 % Coastline data set and coordinate limits around Chile-Peru System:
@@ -18,11 +25,10 @@ lonlim = [min(lon) max(lon)]; % works for negative longitude, but will have to s
 load coastlines
 Lat = ones(length(lon),1)*lat';
 Lon = lon*ones(1,length(lat));
-clim = [min(sstSwA,[],'all') max(sstSwA,[],'all')];
+clim = [min(dSSTa,[],'all') max(dSSTa,[],'all')];
 yc = [255, 255, 0;0, 255, 255]; 
-load('summerDates.mat')
 
-A = datenum(time1);
+A = datenum(time1(1:end-1));
 % Plot contours of SST' on world map for each date in summerDates
 for n = 1:length(summerDates)
     B = datenum(summerDates(n));
@@ -36,10 +42,10 @@ for n = 1:length(summerDates)
         setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
         plotm(coastlat,coastlon) % Adds coastlines
         if sum(t0)>1
-            [C,~] = contourm(Lat,Lon,mean(sstSwA(:,:,t0),3,'omitnan'),100,'Fill','on'); % Contour of SST'
+            [C,~] = contourm(Lat,Lon,mean(dSSTa(:,:,t0),3,'omitnan'),100,'Fill','on'); % Contour of SST'
             caxis(clim)
         else
-            [C,~] = contourm(Lat,Lon,sstSwA(:,:,t0),100,'Fill','on'); % Contour of SST'
+            [C,~] = contourm(Lat,Lon,dSSTa(:,:,t0),100,'Fill','on'); % Contour of SST'
             caxis(clim)
         end
         title(datestr(summerDates(n)))
@@ -52,10 +58,10 @@ for n = 1:length(summerDates)
         setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
         plotm(coastlat,coastlon) % Adds coastlines
         if sum(t0)>1
-            [C,~] = contourm(Lat,Lon,mean(sstSwA(:,:,t0),3,'omitnan'),100,'Fill','on'); % Contour of SST'
+            [C,~] = contourm(Lat,Lon,mean(dSSTa(:,:,t0),3,'omitnan'),100,'Fill','on'); % Contour of SST'
             caxis(clim)
         else
-            [C,~] = contourm(Lat,Lon,sstSwA(:,:,t0),100,'Fill','on'); % Contour of SST'
+            [C,~] = contourm(Lat,Lon,dSSTa(:,:,t0),100,'Fill','on'); % Contour of SST'
             caxis(clim)
         end
         title(datestr(summerDates(n)))
