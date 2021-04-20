@@ -1,7 +1,7 @@
 % comparets.m
 % Kylene Cooley
 % 5 Apr 2021
-% as script to comp[are the time series at point lavapie in the different
+% as script to compare the time series at point lavapie in the different
 % bandpass regions
 
 clear
@@ -52,8 +52,8 @@ clear sstSw0 sstSw1 sstSwA sstLP % make space in ram for bandpass filtered anoma
 
 BP = low1-low2;
 % Replace one window-length with NaNs on each end
-BP(:,:,1:2*round(hours(years(0.5))))=NaN;
-BP(:,:,end-2*round(hours(years(0.5))):end)=NaN;
+BP(:,:,1:2*round(hours(years(0.5))/6))=NaN;
+BP(:,:,end-2*round(hours(years(0.5))/6):end)=NaN;
 
 ts4 = squeeze(BP(ind(2,1),ind(1,1),:)); % timeseries of bandpass filtered anomaly at point near Punta Lavapie (-35.5, -72.75)
 

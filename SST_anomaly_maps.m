@@ -196,22 +196,7 @@ c.Label.FontSize = 14;
 % ylabel("SST' time series 2 (southern point)")
 
 
-%% 
-% % Map of std at each point
-% stdSwA = std(sstSwA,0,3,'omitnan');
-% 
-% figure(7)
-% h = worldmap(latlim,lonlim); % Map over Chile-Peru System
-% setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
-% plotm(coastlat,coastlon) % Adds coastlines
-% [C,~] = contourm(Lat,Lon,stdSwA,'Fill','on'); % Contour of SST'
-% caxis([min(stdSwA,[],'all') max(stdSwA,[],'all')])
-% cmocean('balance')
-% scatterm(ptLat,ptLon,20,yc,'filled')
-% title("Standard deviation of Band-pass Filtered Sea Surface Temperature Anomaly")
-% c = colorbar();
-% c.Label.String = "\sigma_{SST'} [^\circC]";
-% c.Label.FontSize = 14;
+
 
 %% 
 % plot variability of SST and anomalies in 2x3 subplot (all dates)

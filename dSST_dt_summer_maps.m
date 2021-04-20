@@ -15,8 +15,8 @@ dSSTa = 4.*(sstSwA(:,:,2:end)-sstSwA(:,:,1:end-1));
 ptLat = [-35.5 -41];
 ptLon = [-72.75 -75];
 ind = NaN(2);
-ind(1,:) = find(ismembertol(lat,ptLat));
-ind(2,:) = flip(find(ismembertol(lon,ptLon)));
+ind(1,:) = find(ismembertol(lat,ptLat)); % columns of data array
+ind(2,:) = flip(find(ismembertol(lon,ptLon))); % rows of data array
 
 % mapping the time rate of change of the anomaly
 % Coastline data set and coordinate limits around Chile-Peru System:
@@ -30,8 +30,8 @@ yc = [255, 255, 0;0, 255, 255];
 
 A = datenum(time1(1:end-1));
 % Plot contours of SST' on world map for each date in summerDates
-for n = 1:length(summerDates)
-    B = datenum(summerDates(n));
+for n = 1:length(sumdSSTdates)
+    B = datenum(sumdSSTdates(n));
     tol = datenum(hours(3))/max(abs([A(:);B(:)]));
     
     t0 = ismembertol(A,B,tol); % Finds which 6-hourly time is nearest to summerDates(n)
@@ -48,7 +48,7 @@ for n = 1:length(summerDates)
             [C,~] = contourm(Lat,Lon,dSSTa(:,:,t0),100,'Fill','on'); % Contour of SST'
             caxis(clim)
         end
-        title(datestr(summerDates(n)))
+        title(datestr(sumdSSTdates(n)))
         cmocean('balance','pivot',0)
         scatterm(ptLat,ptLon,20,yc,'filled')
     elseif n>=17
@@ -64,21 +64,37 @@ for n = 1:length(summerDates)
             [C,~] = contourm(Lat,Lon,dSSTa(:,:,t0),100,'Fill','on'); % Contour of SST'
             caxis(clim)
         end
-        title(datestr(summerDates(n)))
+        title(datestr(sumdSSTdates(n)))
         cmocean('balance','pivot',0)
         scatterm(ptLat,ptLon,20,yc,'filled')
     end
 end
 
 figure(1)
-sgtitle("Band-pass Filtered Sea Surface Temperature Anomaly")
+sgtitle("Band-pass Filtered $$ \frac{ \partial SST'}{ \partial t} $$",'Interpreter','latex')
 hp4 = get(subplot(4,4,16),'Position');
 c = colorbar('Position', [hp4(1)+hp4(3)+0.01  hp4(2)  0.01  hp4(2)+hp4(3)*4.1]);
-c.Label.String = "SST' [^\circC]";
+c.Label.String = "$$ \frac{ \partial SST'}{ \partial t} $$ [$^\circ$C]";
+c.Label.Interpreter = 'latex';
 c.Label.FontSize = 14;
+
 figure(2)
-sgtitle("Band-pass Filtered Sea Surface Temperature Anomaly")
-hp4 = get(subplot(4,4,16),'Position');
-c = colorbar('Position', [hp4(1)+hp4(3)+0.01  hp4(2)  0.01  hp4(2)+hp4(3)*4.1]);
-c.Label.String = "SST' [^\circC]";
+sgtitle("Band-pass Filtered $$ \frac{ \partial SST'}{ \partial t} $$",'Interpreter','latex')
+hp4 = get(subplot(4,4,15),'Position');
+c = colorbar('Position', [hp4(1)+2*hp4(3)+0.07  hp4(2)  0.01  hp4(2)+hp4(3)*4.1]);
+c.Label.String = "$$ \frac{ \partial SST'}{ \partial t} $$ [$^\circ$C]";
+c.Label.Interpreter = 'latex';
 c.Label.FontSize = 14;
+
+%% 10-year chunks of time series of bandpass SST' and dSST'dt 
+
+sstAPL = sstSwA(ind(2,1),ind(1,1),:); % SST' at the yellow dot
+
+dsstPL = dSSTa(ind(2,1),ind(1,1),:); % dSST'dt at the yellow dot
+
+% tenyr = round(hour(years(10))/6); % number of samples in 10 years to limit plots
+
+figure(3)
+plot(time1,dsstPL)
+ylabel("$$ \frac{ \partial SST'}{ \partial t} $$ [$^\circ$C/day]",'Interpreter','latex')
+xlabel("date")

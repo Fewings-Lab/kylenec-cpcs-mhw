@@ -93,8 +93,8 @@ foo6 = pl66tn(sstA,1,hrs); % Evaluate the low-pass filtered signal
 % Take high-pass part of signal
 sstA = sstA-foo6;
 % Replace one window-length with NaNs on each end
-sstA(1:2*round(hrs))=NaN;
-sstA(end-2*round(hrs):end)=NaN;
+sstA(1:2*round(hrs/dt))=NaN;
+sstA(end-2*round(hrs/dt):end)=NaN;
 
 
 sigA = std(sstA,'omitnan');
@@ -181,6 +181,10 @@ summerDates = tTm(monthnum <3 | monthnum==12); % corresponding times
 % Reduce dSST' points by limiting to the last nearest date within 24 days of peak SST' dates
 maxdate = tTm;
 mindate = tTm - days(24);
+
+% Find the peak warming before each summer date
+% maxdate = summerDates;
+% mindate = summerDates - days(24);
 tdTind = [];
 
 for i = 1:length(maxdate)
@@ -190,6 +194,10 @@ end
 % tdTind = ismembertol(datenum(tdTm),datenum(tTm),datenum(days(8))); 
 dsstM = dsstM(tdTind);
 tdTm = tdTm(tdTind);
+
+% % peak warming summer dates
+% sumdSST = dsstM(tdTind);
+% sumdSSTdates = tdTm(tdTind);
 
 
 % Plot of SST' and dt in same figure with 2 y-axes

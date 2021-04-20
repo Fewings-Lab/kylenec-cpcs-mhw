@@ -16,8 +16,8 @@ function [low1, high1, low2] = bandpassV3(dat,dt,TcL,TcH)
     % high pass part for variability maps
     high1 = dat-low1;
     % Replace one window-length with NaNs on each end
-    high1(:,:,1:2*round(TcL))=NaN;
-    high1(:,:,end-2*round(TcL):end)=NaN;
+    high1(:,:,1:2*round(TcL/dt))=NaN;
+    high1(:,:,end-2*round(TcL/dt):end)=NaN;
 
     % low-pass filter with higher cutoff period in
     % years
@@ -32,7 +32,7 @@ function [low1, high1, low2] = bandpassV3(dat,dt,TcL,TcH)
 %     % Take high-pass part of signal
 %     datbp = low1-low2;
 %     % Replace one window-length with NaNs on each end
-%     datbp(1:2*round(hrs))=NaN;
-%     datbp(end-2*round(hrs):end)=NaN;
+%     datbp(1:2*round(hrs/dt))=NaN;
+%     datbp(end-2*round(hrs/dt):end)=NaN;
 
 end

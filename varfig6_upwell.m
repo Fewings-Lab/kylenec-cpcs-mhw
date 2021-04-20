@@ -46,8 +46,8 @@ sstSwA = sstLP-sstSw0;
 clear sstSw0 sstSw1 sstSwA sstLP
 BP = low1-low2;
 % Replace one window-length with NaNs on each end
-BP(1:2*round(hours(years(0.5))))=NaN;
-BP(end-2*round(hours(years(0.5))):end)=NaN;
+BP(1:2*round(hours(years(0.5))/6))=NaN;
+BP(end-2*round(hours(years(0.5))/6):end)=NaN;
     
 sig4u = std(high(:,:,tupwell),0,3,'omitnan'); % std of the high-pass filtered part of the anomaly
 sig5u = std(BP(:,:,tupwell),0,3,'omitnan'); % std of the band-pass filtered part of the anomaly
