@@ -96,7 +96,8 @@ clear dSST6 low2
 % clear dSST4 dSST5 dSST6
 
 % save standard deviation of different parts to .mat file
-% save('stdSSTup.mat','sig0u','sig1u','sig2u','sig4u','sig5u','sig6u','lat','lon')
+save('std_dSSTdt.mat','sig0','sig1','sig2','sig4','sig5','sig6','lat','lon')
+save('std_dSSTdt_up.mat','sig0u','sig1u','sig2u','sig4u','sig5u','sig6u','lat','lon')
 
 
 %% Plotting the variablity of all times
