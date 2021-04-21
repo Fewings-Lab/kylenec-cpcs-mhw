@@ -306,7 +306,7 @@ lonlim = [min(lon) max(lon)]; % works for negative longitude, but will have to s
 load coastlines
 Lat = ones(length(lon),1)*lat'; % 81x101 arrays for contour plot
 Lon = lon*ones(1,length(lat));
-clim = [0.075 0.168]; % manually set color axis limits
+clim = [0.08 0.15]; % manually set color axis limits
 yc = [255, 255, 0;0, 255, 255]; % color vector for time series pts
 ptLat = [-35.5 -41]; % location of time series points
 ptLon = [-72.75 -75];
@@ -315,13 +315,13 @@ figure(3)
 h = worldmap(latlim,lonlim); % Map over Chile-Peru System
 setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim,'MLabelParallel','south')
 plotm(coastlat,coastlon) % Adds coastlines
-[C,~] = contourm(Lat,Lon,sig5u,150,'Fill','on'); % Contour of std of SST
+[C,~] = contourm(Lat,Lon,sig5u,257,'Fill','on'); % Contour of std of SST
 caxis(clim)
-title("Standard deviation of $$ \frac{\partial SST'}{\partial t} $$ in 10-day to 6-month band",'Interpreter','latex')
-cmap = cat(1,ones(25,1)*[0.5 0.5 0.5],cmocean('thermal'),ones(25,1)*[0.7 0.3 0.8]);
+title("Standard deviation of $$ \frac{\partial SST'}{\partial t} $$ in 10-day to 6-month band during the upwelling season 1980-2020",'Interpreter','latex')
+cmap = cat(1,cmocean('thermal',256),[1 0 0]);
 colormap(cmap)
 scatterm(ptLat,ptLon,20,yc,'filled')
-h = patchm([ptLat(1) ptLat(1)-1 ptLat(1)-1 ptLat(1)],[ptLon(1)  ptLon(1)  ptLon(1)-1 ptLon(1)-1],'EdgeColor','g','FaceColor','none','LineWidth',2);
+h = patchm([ptLat(1) ptLat(1)-1 ptLat(1)-1 ptLat(1)],[ptLon(1)-(3/5)  ptLon(1)-(3/5)  ptLon(1)-(8/5) ptLon(1)-(8/5)],'EdgeColor','g','FaceColor','none','LineWidth',2);
 c = colorbar();
 c.Label.String = "\sigma [^\circC/day]";
 c.Label.FontSize = 14;
