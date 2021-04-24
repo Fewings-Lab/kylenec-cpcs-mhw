@@ -1,0 +1,31 @@
+% Cross-correlation of dSST'/dt in bandpass
+% Kylene Cooley
+% 22 Apr 2021
+% Calculates the cross-correlation coefficients with the yellow dot point
+% (Punta Lavapie) dSST'/dt, maps this and maps this. 95% critical value is bottom of
+% the colorbar
+
+load("sstSwA.mat")
+
+dSSTdt = sstSwA(:,:,2:end)-sstSwA(:,:,1:end-1);
+
+% cross-correlation coefficient array
+RhoXY = zeros(length(lon),length(lat));
+
+% find and extract the time series at Punta Lavapie
+ptLat = -35.5;
+ptLon = -72.75;
+ind = NaN(1,2);
+ind(1) = find(ismembertol(lat,ptLat));
+ind(2) = flip(find(ismembertol(lon,ptLon)));
+X = sstSwA(ind(2),ind(1));
+
+for j = 1:length(lon)
+    for k = 1:length(lat)
+        Y = sstSwA(j,k,:); % time series to compare
+        RhoXY(j,k) = squeeze(crosscorrTL(X,Y,0));
+    end
+end
+
+% Plot the cross-correlation coefficient map with lower clim = 95% critical
+% value
