@@ -9,7 +9,7 @@
 % from a 1deg sq box in the middle of the offshore region of high SST' that
 % appears during most "yellow dot" events. 
 
-load("sstSwA.mat")
+%load("sstSwA.mat")
 
 % get indices for lat and lon of either point or center of box
 ptLat = [-35.5,-36,-29];        % deg N of dot or center of box
@@ -44,27 +44,29 @@ dts3 = (ts3(2:end)-ts3(1:end-1))*4;
 
 % plot 3 time series of each variable in same figure with 3 different line
 % styles
-figure(1)
-
-yyaxis left                 % SST' time series
-plot(time1,ts1,'-',sumDates1,sumSST1,'*','MarkerSize',12,'LineWidth',1)
+figure(1) % SST' timeseries
+plot(time1,ts1,'-k',sumDates1,sumSST1,'*k','MarkerSize',12,'LineWidth',1)
 hold on
-plot(time1,ts2,'--',sumDates2,sumSST2,'*','MarkerSize',12,'LineWidth',1)
-plot(time1,ts3,'-.',sumDates3,sumSST3,'*','MarkerSize',12,'LineWidth',1)
+plot(time1,ts2,'--b',sumDates2,sumSST2,'*b','MarkerSize',12,'LineWidth',1)
+plot(time1,ts3,'-.r',sumDates3,sumSST3,'*r','MarkerSize',12,'LineWidth',1)
 yline(0,'-k')
 xlabel('Date')
 datetick('x','yyyy-mmm','keeplimits','keepticks')
 ylabel("SST' [^{\circ}C]",'Interpreter','tex')
-title("10-day to 6-month bandpass filtered SST' and $\frac{\partial \textsf{SST'}}{\partial \textsf{t}}$",'Interpreter','latex')
+legend('Nearshore point','','Spatial mean within nearshore box','','Spatial mean within offshore box')
+title("10-day to 6-month bandpass filtered SST'",'Interpreter','latex')
 
-yyaxis right                % dSST'/dt time series
-plot(time1(1:end-1),dts1,"-",sumdDates1,sumdSST1,'*','MarkerSize',12,'LineWidth',1)
+figure(2) % dSST'/dt timeseries
+plot(time1(1:end-1),dts1,"-k",sumdDates1,sumdSST1,'*k','MarkerSize',12,'LineWidth',1)
 hold on
-plot(time1(1:end-1),dts2,"--",sumdDates2,sumdSST2,'*','MarkerSize',12,'LineWidth',1)
-plot(time1(1:end-1),dts3,"-.",sumdDates3,sumdSST3,'*','MarkerSize',12,'LineWidth',1)
+plot(time1(1:end-1),dts2,"--b",sumdDates2,sumdSST2,'*b','MarkerSize',12,'LineWidth',1)
+plot(time1(1:end-1),dts3,"-.r",sumdDates3,sumdSST3,'*r','MarkerSize',12,'LineWidth',1)
 yline(0,'-k')
+xlabel('Date')
 ylabel("$\frac{\partial \textsf{SST'}}{\partial \textsf{t}} \textsf{[}^{\circ}\textsf{C/day]}$",'Interpreter','latex')
 datetick('x','yyyy-mmm','keeplimits','keepticks')
+legend('Nearshore point','','Spatial mean within nearshore box','','Spatial mean within offshore box')
+title("10-day to 6-month bandpass filtered $\frac{\partial \textsf{SST'}}{\partial \textsf{t}}$",'Interpreter','latex')
 
 %% Plotting each location on a separate subplot
 figure(2)
@@ -115,3 +117,48 @@ title("Spatial mean within offshore box (N_{events}=41)")
 
 sgtitle("10-day to 6-month bandpass filtered SST' and $\frac{\partial \textsf{SST'}}{\partial \textsf{t}}$",'Interpreter','latex')
 linkaxes([ax1 ax2 ax3],'x')
+
+%% simple timeseries for nearshore box mean
+sig_box = std(ts2,'omitnan');
+
+figure()
+plot(time1,ts2,'b',sumDates2,sumSST2,'*b','MarkerSize',12,'LineWidth',1)
+hold on 
+yline(0,'-k')
+yline(2*sig_box,'--b')
+yline(-2*sig_box,'--b')
+xlabel('Date')
+datetick('x','yyyy-mmm','keeplimits','keepticks')
+ylabel("SST' [^{\circ}C]",'Interpreter','tex')
+legend(["SST'";'';'';'\pm 2\sigma limits'])
+title("10-day to 6-month bandpass filtered SST'",'Interpreter','latex')
+
+%% time series without stars
+sig_box = std(ts2,'omitnan');
+
+figure()
+plot(time1,ts2,'b')
+hold on 
+yline(0,'-k')
+yline(2*sig_box,'--b')
+yline(-2*sig_box,'--b')
+xlabel('Date')
+datetick('x','yyyy-mmm','keeplimits','keepticks')
+ylabel("SST' [^{\circ}C]",'Interpreter','tex')
+legend(["SST'";'';'\pm 2\sigma limits'])
+title("10-day to 6-month bandpass filtered SST'",'Interpreter','latex')
+%% simple dSST'/dt for nearshore box
+figure()      
+yyaxis left      % SST' time series
+plot(time1,ts2,sumDates2,sumSST2,'*','MarkerSize',12,'LineWidth',1)
+hold on
+yline(0,'-k')
+ylabel("SST' [^{\circ}C]",'Interpreter','tex')
+yyaxis right                % dSST'/dt time series
+plot(time1(1:end-1),dts2,"--",sumdDates2,sumdSST2,'*','MarkerSize',12,'LineWidth',1)
+hold on
+yline(0,'-k')
+ylabel("$\frac{\partial \textsf{SST'}}{\partial \textsf{t}} \textsf{[}^{\circ}\textsf{C/day]}$",'Interpreter','latex')
+datetick('x','yyyy-mmm','keeplimits','keepticks')
+title("10-day to 6-month bandpass filtered SST' and $\frac{\partial SST'}{\partial t}$",'Interpreter','latex')
+xlabel('Date')

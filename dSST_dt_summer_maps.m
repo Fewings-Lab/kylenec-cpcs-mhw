@@ -39,7 +39,7 @@ for n = 1:length(sumdSSTdates)
         figure(1)
         subplot(4,4,n)
         h = worldmap(latlim,lonlim); % Map over Chile-Peru System
-        setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
+        setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim,'MLabelParallel','south')
         plotm(coastlat,coastlon) % Adds coastlines
         if sum(t0)>1
             [C,~] = contourm(Lat,Lon,mean(dSSTa(:,:,t0),3,'omitnan'),100,'Fill','on'); % Contour of SST'
@@ -48,14 +48,14 @@ for n = 1:length(sumdSSTdates)
             [C,~] = contourm(Lat,Lon,dSSTa(:,:,t0),100,'Fill','on'); % Contour of SST'
             caxis(clim)
         end
-        title(datestr(sumdSSTdates(n)))
+        title(datestr(sumdSSTdates(n),24),'FontSize',14)
         cmocean('balance','pivot',0)
         scatterm(ptLat,ptLon,20,yc,'filled')
     elseif n>=17
         figure(2)
         subplot(4,4,n-16)
         h = worldmap(latlim,lonlim); % Map over Chile-Peru System
-        setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim)
+        setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim,'MLabelParallel','south')
         plotm(coastlat,coastlon) % Adds coastlines
         if sum(t0)>1
             [C,~] = contourm(Lat,Lon,mean(dSSTa(:,:,t0),3,'omitnan'),100,'Fill','on'); % Contour of SST'
@@ -64,27 +64,27 @@ for n = 1:length(sumdSSTdates)
             [C,~] = contourm(Lat,Lon,dSSTa(:,:,t0),100,'Fill','on'); % Contour of SST'
             caxis(clim)
         end
-        title(datestr(sumdSSTdates(n)))
+        title(datestr(sumdSSTdates(n),24),'FontSize',14)
         cmocean('balance','pivot',0)
         scatterm(ptLat,ptLon,20,yc,'filled')
     end
 end
 
 figure(1)
-sgtitle("Band-pass Filtered $$ \frac{ \partial SST'}{ \partial t} $$",'Interpreter','latex')
+sgtitle("Band-pass Filtered $$ \frac{ \partial SST'}{ \partial t} $$",'Interpreter','latex','FontSize',20)
 hp4 = get(subplot(4,4,16),'Position');
 c = colorbar('Position', [hp4(1)+hp4(3)+0.01  hp4(2)  0.01  hp4(2)+hp4(3)*4.1]);
-c.Label.String = "$$ \frac{ \partial SST'}{ \partial t} $$ [$^\circ$C]";
+c.Label.String = "$$ \frac{ \partial SST'}{ \partial t} $$ [$^\circ$C/day]";
 c.Label.Interpreter = 'latex';
-c.Label.FontSize = 14;
+c.Label.FontSize = 18;
 
 figure(2)
-sgtitle("Band-pass Filtered $$ \frac{ \partial SST'}{ \partial t} $$",'Interpreter','latex')
+% sgtitle("Band-pass Filtered $$ \frac{ \partial SST'}{ \partial t} $$",'Interpreter','latex','FontSize',20)
 hp4 = get(subplot(4,4,15),'Position');
 c = colorbar('Position', [hp4(1)+2*hp4(3)+0.07  hp4(2)  0.01  hp4(2)+hp4(3)*4.1]);
-c.Label.String = "$$ \frac{ \partial SST'}{ \partial t} $$ [$^\circ$C]";
+c.Label.String = "$$ \frac{ \partial SST'}{ \partial t} $$ [$^\circ$C/day]";
 c.Label.Interpreter = 'latex';
-c.Label.FontSize = 14;
+c.Label.FontSize = 18;
 
 %% 10-year chunks of time series of bandpass SST' and dSST'dt 
 

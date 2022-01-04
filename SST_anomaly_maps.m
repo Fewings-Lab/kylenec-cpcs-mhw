@@ -42,6 +42,7 @@ for i=1:length(lon) % Looping through longitude slices because the pl66 filter o
     sstLP(i,:,:) = (pl66tn(squeeze(sstSw1(i,:,:)),6,240))'; % Don't forget that for 6-hourly data, dt=6
 end
 
+
 sig1 = std(sstSw1,0,3,'omitnan');
 %%
 % Make a climatological annual cycle for each lat, lon pair

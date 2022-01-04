@@ -1,4 +1,4 @@
-% comparets.m
+ % comparets.m
 % Kylene Cooley
 % 5 Apr 2021
 % as script to compare the time series at point lavapie in the different
