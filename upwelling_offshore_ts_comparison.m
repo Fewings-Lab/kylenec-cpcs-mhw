@@ -9,7 +9,11 @@
 % from a 1deg sq box in the middle of the offshore region of high SST' that
 % appears during most "yellow dot" events. 
 
-%load("sstSwA.mat")
+% 17 June 2021: Change color of orange time series for manuscript Figure 3
+% to red. Also changing symbol for times of peak anomalous warming in
+% timeseries to filled triangles to differentiate graphically. -- KC
+
+load("sstSwA.mat")
 
 % get indices for lat and lon of either point or center of box
 ptLat = [-35.5,-36,-29];        % deg N of dot or center of box
@@ -17,7 +21,7 @@ ptLon = [-72.75,-73.75,-77.75]; % deg E of dot or center of box
 ind = NaN(2,3);
 ind(1,:) = find(ismembertol(lat,ptLat));
 ind(2,:) = find(ismembertol(lon,ptLon));
-[x1,x2,x3] = matsplit(flip(ind(2,:)));          % not sstSwA dim order is lon,lat,time
+[x1,x2,x3] = matsplit(flip(ind(2,:)));          % sstSwA dim order is lon,lat,time
 [y1,y2,y3] = matsplit(circshift(ind(1,:),2));
 
 % time series at yellow dot
@@ -148,17 +152,53 @@ ylabel("SST' [^{\circ}C]",'Interpreter','tex')
 legend(["SST'";'';'\pm 2\sigma limits'])
 title("10-day to 6-month bandpass filtered SST'",'Interpreter','latex')
 %% simple dSST'/dt for nearshore box
-figure()      
+h1 = figure();
+tiledlayout(2,1,'TileSpacing','compact','Padding','compact')
+
+nexttile
+%ax1 = subplot(2,1,1);
+colororder({'#0072BD','r'})
 yyaxis left      % SST' time series
-plot(time1,ts2,sumDates2,sumSST2,'*','MarkerSize',12,'LineWidth',1)
+plot(time1,ts2,sumDates2,sumSST2,'*','MarkerSize',8,'LineWidth',0.7)
 hold on
 yline(0,'-k')
-ylabel("SST' [^{\circ}C]",'Interpreter','tex')
+ylim([-2.5 2.5])
+ylabel("SST' [^{\circ}C]",'Interpreter','tex','FontSize',8)
 yyaxis right                % dSST'/dt time series
-plot(time1(1:end-1),dts2,"--",sumdDates2,sumdSST2,'*','MarkerSize',12,'LineWidth',1)
+plot(time1(1:end-1),dts2,"--r",sumdDates2,sumdSST2,'^','MarkerFaceColor','r','MarkerSize',6,'LineWidth',0.7)
 hold on
 yline(0,'-k')
-ylabel("$\frac{\partial \textsf{SST'}}{\partial \textsf{t}} \textsf{[}^{\circ}\textsf{C/day]}$",'Interpreter','latex')
+ylim([-0.5 0.5])
+ylabel("$\partial \textsf{SST'}/\partial \textsf{t} \textsf{ [}^{\circ}\textsf{C day}^{-1}\textsf{]}$",'Interpreter','latex','FontSize',8)
 datetick('x','yyyy-mmm','keeplimits','keepticks')
-title("10-day to 6-month bandpass filtered SST' and $\frac{\partial SST'}{\partial t}$",'Interpreter','latex')
-xlabel('Date')
+%title("10-day to 6-month bandpass filtered SST' and $\frac{\partial SST'}{\partial t}$",'Interpreter','latex')
+xlabel('Date','FontSize',8)
+set(gca,'FontSize',8)
+
+nexttile
+% ax2 = subplot(2,1,2);
+colororder({'#0072BD','r'})
+yyaxis left      % SST' time series
+plot(time1,ts2,sumDates2,sumSST2,'*','MarkerSize',8,'LineWidth',0.7)
+hold on
+yline(0,'-k')
+ylim([-2.5 2.5])
+ylabel("SST' [^{\circ}C]",'Interpreter','tex','FontSize',8)
+yyaxis right                % dSST'/dt time series
+plot(time1(1:end-1),dts2,"--",sumdDates2,sumdSST2,'^','MarkerSize',6,'MarkerFaceColor','r','LineWidth',0.7)
+hold on
+yline(0,'-k')
+ylim([-0.5 0.5])
+ylabel("$\partial \textsf{SST'}/\partial \textsf{t} \textsf{ [}^{\circ}\textsf{C day}^{-1}\textsf{]}$",'Interpreter','latex','FontSize',8)
+xlim([datetime('2007-11-01') datetime('2010-03-01')])
+datetick('x','yyyy-mmm','keeplimits','keepticks')
+%title("10-day to 6-month bandpass filtered SST' and $\frac{\partial SST'}{\partial t}$",'Interpreter','latex')
+xlabel('Date','FontSize',8)
+set(gca,'FontSize',8)
+
+h1.Units = 'centimeters';
+h1.Position = [0 0 19 12];
+h1.PaperUnits = 'centimeters';
+h1.PaperPosition = [0 0 19 12];
+
+%exportgraphics(h1,"SST'-dSST'-box-avg-simple-v6.pdf")
