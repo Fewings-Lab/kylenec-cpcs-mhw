@@ -1,12 +1,11 @@
 % qnet_ev_maps.m
-% parpool(20)
 
 % open the daily ERA5 SST' struct over CPS, SST is in units of
 % Kelvin
 latlim = [-50 -15];
 lonlim = 360 + [-90 -70];
 
-[out,info] = synoptic_anomaly_sfc({'netlw_sfc','netsw_sfc','slhf','sshf'},latlim,lonlim,'01/01/1979','12/21/2020');
+[out,info] = synoptic_anomaly_sfc({'netlw_sfc','netsw_sfc','slhf','sshf'},latlim,lonlim,'01/01/1979','12/21/2020','anomaly');
 
 % dat = read_era5_new('sfc','daily','01/01/1979','12/31/2020',{'sst'},lonlim,latlim,'anomaly',1);
 % fields = fieldnames(dat); 
@@ -49,7 +48,7 @@ cp = 3850; % J/kg/degC
 rhow = 1025; % kg/m^3
 h = 25; % m
 % heat flux is in W/m^2 or J/s/m^2 
-% multiplicative factor changes to change per day in numerator and changes from heat flux to temperature change in
+%multiplicative factor changes to change per day in numerator and changes from heat flux to temperature change in
 % denominator
 dat_cube_dT = dat_cube.*(24*3600)./(rhow*cp*h);
 
@@ -75,17 +74,12 @@ Lat = info.sshf.lat*ones(length(info.sshf.lon),1)';
 Lon = ones(length(info.sshf.lat),1)*info.sshf.lon';
 clim = [min(dat_cube_dT,[],'all') max(dat_cube_dT,[],'all')]; % limits for the colorbar
 
-%% Plot filled contours of dSST'/dt on world map for each event
+%% Plot filled contours of net surface heat flux on world map for each event
 load qnet_ev_data.mat
 load event_dates.mat
 
 t_dt = rmmissing(t_dt);
-% figure()
-% subplot(4,4,16)
-% hp4 = get(subplot(4,4,16),'Position');
-% close
 
-% parpool(20)
 for i = 1:ceil(length(t_dt)/16)
    figure()
    for j = 1:16
@@ -126,6 +120,7 @@ end
 load qnet_ev_data.mat
 % load event_dates.mat
 load stat_sig_dSST.mat
+load 0_05_level_lines.mat
 
 qnet_avg = mean(dat_cube_dT,3,'omitnan');
 
@@ -154,17 +149,33 @@ load coastlines
 Lat = info.sshf.lat*ones(length(info.sshf.lon),1)';
 Lon = ones(length(info.sshf.lat),1)*info.sshf.lon';
 clim = [min(dSST_avg_stat_sig,[],'all') max(dSST_avg_stat_sig,[],'all')]; % limits for the colorbar
+lvls = [min(clim,[],'omitnan'):.001:max(clim,[],'omitnan')];
 
 figure()
 h = worldmap(latlim,lonlim);
 setm(h,'PLabelLocation',latlim,'MLabelLocation',lonlim-360,'MLabelParallel','south')
 plotm(coastlat,coastlon) % Adds coastlines
-[C,~] = contourm(Lat,Lon,qnet_avg_stat_sig,100,'Fill','on'); % Contour of SST'
+[C_qnet,h_qnet] = contourm(Lat,Lon,qnet_avg_stat_sig,lvls,'Fill','on'); % Contour of SST'
 caxis(clim)
-cmocean('balance',500,'pivot',0)
+cmocean('balance',length(lvls),'pivot',0)
 c = colorbar();
 c.Label.Interpreter = 'latex';
 c.Label.String = "$$ \frac{ \partial SST'}{ \partial t} $$ [$^\circ$C/day]";
-c.Label.FontSize = 18;
-sgtitle("Average Band-pass Filtered Temperature Change from Q'_{net}",'Interpreter','tex','FontSize',20)
+% sgtitle("Average Band-pass Filtered Temperature Change from Q'_{net}",'Interpreter','tex','FontSize',20)
+fillm(coastlat,coastlon,[0.7 0.7 0.7]) % Adds gray landmass
+plotm(y1,x1,'k','LineWidth',0.7)
+plotm(y2,x2,'k','LineWidth',0.7)
+c.Label.FontSize = 8;
+c.FontSize = 8;
+set(gcf,'Units','centimeters','Position',[0 0 9.5 11],'PaperUnits','centimeters','PaperPosition',[0 0 9.5 11])
+set(gca,'FontSize',8)
+setm(gca,'FontSize',8)
+PL1 = scatterm(-37.3,-73.3,40,'ow','filled');
+PL1.Children.ZData = 4;
+PL2 = scatterm(-37.3,-73.3,17,'k','filled','MarkerEdgeColor','w');
+PL2.Children.ZData = 5;
+t1 = text(610000,-4250000,'PL','Color',[0 0 0],'HorizontalAlignment','left','FontSize',8);
 
+% exportgraphics(gcf,'avg_qnet_stat_sig_v8.png','Resolution',1600)
+
+% saveas(gcf,'avg_qnet_stat_sig_v6.png')
