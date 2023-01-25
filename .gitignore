@@ -103,4 +103,4 @@ SST'-dSST'-box-avg-simple-v5.pdf
 SST'-dSST'-box-avg-simple-v3.pdf
 heat_budget_eq_v5.png
 djfeventdiff_mean_wEk_v4.png
-*.mat
+# *.mat # temporarily tracking these files as I move them around and change source code
