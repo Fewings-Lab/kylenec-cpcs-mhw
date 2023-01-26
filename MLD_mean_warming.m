@@ -9,15 +9,19 @@
 % just for a talk).
 % Edited 2 Mar 2022 to weight summer mean by area of square as a function
 % of latitude
+% Edited 25 Jan 2023 to make data paths more general using data sub-folders
+
+currentdirectory = pwd;
 
 % Staring with the linear regression output to test our method. Holte et
 % al. summer mean MLD is used towards end of code.
-
-load mld_linreg_out.mat
+mldLinearRegressionFile = fullfile(currentdirectory,'data','processed','mld_linreg_out.mat');
+load(mldLinearRegressionFile)
 % contains the output terms of the MLD linear regression model assuming no
 % residual in the simplified heat budget, skill of the model, and lat, lon
 % pairs of each point: b0, b1, lat, lon, S, Scr
-load 0_05_level_lines.mat
+MeanAreaWarmingFile = fullfile(currentdirectory,'data','processed','0_05_level_lines.mat');
+load(MeanAreaWarmingFile)
 % contains contour lines for mean area of anomalous warming
 % top line x2,y2 and bottom line x1,y1
 
