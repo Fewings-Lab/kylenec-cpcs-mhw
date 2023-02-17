@@ -1,4 +1,4 @@
-% SST_maps_new.m
+% s04_0_SST_maps_new.m
 
 % Edited 13 Nov 2022 by KMC
 

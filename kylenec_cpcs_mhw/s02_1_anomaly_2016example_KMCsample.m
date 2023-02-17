@@ -1,4 +1,4 @@
-% anomaly_2016example.m 
+% s02_1_anomaly_2016example_KMCsample.m 
 
 % A script to load SST' and wind stress anomaly data for the Jan 2016
 % example in Cooley et al. (2022) and then map SST' on 16 Jan 2016 and the

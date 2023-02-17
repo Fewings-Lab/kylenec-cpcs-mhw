@@ -1,4 +1,4 @@
-% R_maps.m
+% s06_4_R_maps.m
 
 Qnet = load('qnet_ev_data.mat');
 dSST = load('dSSTdt_cube.mat');

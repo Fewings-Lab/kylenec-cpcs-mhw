@@ -1,4 +1,4 @@
-% stat_sig_map.m
+% s06_1_stat_sig_map.m
 
 % show if the mean of the events is statistically significant from zero to
 % 95% confidence level

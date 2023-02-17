@@ -1,4 +1,4 @@
-% find_SST_events.m
+% s03_0_1_find_SST_events.m
 % Kylene Cooley
 % 29 June 2021
 
