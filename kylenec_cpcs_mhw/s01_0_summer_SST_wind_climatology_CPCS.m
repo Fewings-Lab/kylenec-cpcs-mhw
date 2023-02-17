@@ -1,4 +1,4 @@
-% s01_0_introfigure.m
+% s01_0_summer_SST_wind_climatology_CPCS.m
 
 % A script to map summer (DJF) average SST' and wind stress as a for the
 % Chile-Peru Current System between 15 S and 50 S. The section plotting
