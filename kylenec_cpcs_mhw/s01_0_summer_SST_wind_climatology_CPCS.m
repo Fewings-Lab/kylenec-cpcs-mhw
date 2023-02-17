@@ -6,8 +6,7 @@
 
 % Version 9/2/2022 Kylene M Cooley
 
-% NOTE: Consider changing name to something more descriptive of resulting
-% figure
+% Edited title 2/16/2023 - KMC
 
 %% Define map region and time period to average summer months over, then collect SST data
 
