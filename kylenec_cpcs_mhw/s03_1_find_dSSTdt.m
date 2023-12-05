@@ -1,4 +1,4 @@
-% find_dSSTdt.m
+% s03_1_find_dSSTdt.m
 
 latlim = [-50 -15];
 lonlim = 360 + [-90 -70];

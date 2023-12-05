@@ -1,4 +1,4 @@
-% windstcrl.m
+% s09_0_windstcrl.m
 % Kylene Cooley
 % Just mapping wind stress curl outputs from L2 scatterometer data provided
 % by Larry

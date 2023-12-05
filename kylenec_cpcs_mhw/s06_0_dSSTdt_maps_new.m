@@ -1,4 +1,4 @@
-% dSSTdt_maps_new.m
+% s06_0_dSSTdt_maps_new.m
 
 load dSSTdt_cube.mat
 

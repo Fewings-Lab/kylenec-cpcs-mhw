@@ -1,4 +1,4 @@
-% qnet_ev_maps.m
+% s06_3_qnet_ev_maps.m
 
 % open the daily ERA5 SST' struct over CPS, SST is in units of
 % Kelvin

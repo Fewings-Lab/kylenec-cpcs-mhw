@@ -1,4 +1,4 @@
-% q_component_maps.m
+% s06_2_q_component_maps.m
 
 % parpool(20)
 

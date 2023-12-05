@@ -1,4 +1,4 @@
-% anomaly_2016example.m 
+% s02_0_anomaly_2016example.m 
 
 % A script to load SST' and wind stress anomaly data for the Jan 2016
 % example and then map SST' on 16 Jan 2016 and the mean of the wind stress

@@ -1,4 +1,4 @@
-% upwelling_offshore_ts_comparison.m
+% s05_0_upwelling_offshore_ts_comparison.m
 % Kylene Cooley
 % 28 Apr 2021
 % Compares events and peak rates of warming from three separate time

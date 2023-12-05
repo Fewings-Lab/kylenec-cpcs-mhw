@@ -1,4 +1,4 @@
-% wind_data.m
+% s08_0_wind_data.m
 % Kylene Cooley
 % 5 Aug 2021
 

@@ -1,4 +1,4 @@
-% MLD_regression.m
+% s07_2_MLD_regression.m
 
 % Working through process of cross-correlation map between dSST' and
 % Q'_net/rhow_w*c_p, to linear regression between these to find the slope
